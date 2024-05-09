@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "package": "com.theincgi.advancedmacros.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "client": [
+    "MixinAnvilScreen",
+    "MixinBookEditScreen",
+    "MixinMinecraftClient",
+    "MixinSignEditScreen",
+    "MixinTextFieldWidget",
+    "events.MixinChatHud",
+    "events.MixinGameRenderer",
+    "events.MixinInGameHud",
+    "events.MixinKeyboard",
+    "events.MixinLivingEntityRenderer",
+    "events.MixinMinecraftClient",
+    "events.MixinMouse",
+    "events.MixinTick"
+  ],
+  "mixins": [
+    "MixinEntity",
+    "MixinSignBlockEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
