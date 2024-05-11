@@ -20,12 +20,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Test
+      - name: Install
         run: |
           sudo apt install openjdk-21-jre
           export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
           sudo chmod +x gradlew
 
+      - name: Test
+        run: |
+          ./gradlew
           ./gradlew test > testResult.txt
           cat testResults.txt
           
