@@ -23,6 +23,11 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Python dependencies
+        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+        run: |
+          python -m pip install requests
+
       - name: Runnable gradlew
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         run: |
