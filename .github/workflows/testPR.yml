@@ -32,7 +32,6 @@ jobs:
 
       - name: Test
         run: |
-          ./gradlew
           ./gradlew test | tee testResults.txt
           
           if  grep -q "FAILED" testResults.txt then
