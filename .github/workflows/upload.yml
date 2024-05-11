@@ -72,6 +72,10 @@ jobs:
             fi
           fi
 
+      - name: Curse Forge API Secret
+              env:
+                CURSE_FORGE_API_TOKEN: ${{ secrets.CURSE_FORGE_API_TOKEN }}
+
       - name: Build
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         run: |
