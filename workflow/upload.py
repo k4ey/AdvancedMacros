@@ -9,7 +9,7 @@ HOST = "https://minecraft.curseforge.com"
 def getVersions():
     response = requests.get(
         f"{HOST}/api/game/versions", 
-        headers={"X-Api-Token": os.getenv("CURSE_FORGE_API_TOKEN")
+        headers={"X-Api-Token": os.getenv("secrets.CURSE_FORGE_API_TOKEN")
     })
     if response.status_code == 200:
         return json.loads(response.text)
@@ -18,7 +18,7 @@ def getVersions():
 def getVersionTypes():
     response = requests.get(
         f"{HOST}/api/game/version-types", 
-        headers={"X-Api-Token": os.getenv("CURSE_FORGE_API_TOKEN")
+        headers={"X-Api-Token": os.getenv("secrets.CURSE_FORGE_API_TOKEN")
     })
     if response.status_code == 200:
         types = json.loads(response.text)
@@ -94,7 +94,7 @@ def upload_file(project_id, metadata, fileName, filePath):
         url, 
         files=data,
         headers = {
-            "X-Api-Token": os.getenv("CURSE_FORGE_API_TOKEN")
+            "X-Api-Token": os.getenv("secrets.CURSE_FORGE_API_TOKEN")
         }
     )
 
