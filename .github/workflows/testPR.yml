@@ -42,8 +42,8 @@ jobs:
           else
             if  grep -q "BUILD SUCCESSFUL" testResult.txt then
                 echo "Tests Passed"
-                exit 1
             else
                 echo "unexpected behavior"
+                exit 1
             fi
           fi
