@@ -1,0 +1,62 @@
+name: CurseForge Upload
+
+on:
+  pull_request:
+    branches: [ "1.12.2", "1.14.4", "1.15.2", "1.20.x" ]
+    types: ["closed"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - name: Merge Only
+        if: github.event.pull_request.merged == false
+        run: |
+          echo "Exiting, not a merge event"
+          exit 1
+      
+      - name: Install Python
+        run: |
+          sudo apt update
+          sudo apt install -y python3.8
+
+      - name: Test
+        if: github.event.pull_request.merged == true
+        run: |
+          cd AdvancedMacros
+
+          if ./gradlew test | grep -q "FAILED"; then
+              echo "Tests failed"
+              exit 1
+          else
+              echo "Tests passed"
+          fi
+
+      - name: Build
+        if: github.event.pull_request.merged == true
+        run: |
+          cd AdvancedMacros
+
+          if ./gradlew shadowJar | grep -q "FAILED"; then
+              echo "Build failed"
+              exit 1
+          else
+              echo "Build passed"
+          fi
+
+      - name: Upload
+        if: github.event.pull_request.merged == true
+        run: |
+          cd AdvancedMacros
+
+          python38 workflow/upload.py "neoforge" "neoforge/build/libs"
+          python38 workflow/upload.py "fabric" "fabric/build/libs"
+
+          echo "Files uploaded"

@@ -15,3 +15,5 @@ out/
 
 # Minecraft
 run/
+/.vscode
+/workflow/__pycache__
