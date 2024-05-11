@@ -50,11 +50,11 @@ jobs:
         run: |
           ./gradlew test | tee testResults.txt
           
-          if  grep -q "FAILED" testResults.txt then
+          if  grep -q "FAILED" testResults.txt; then
               echo "Tests failed"
               exit 1
           else
-            if  grep -q "BUILD SUCCESSFUL" testResults.txt then
+            if  grep -q "BUILD SUCCESSFUL" testResults.txt; then
                 echo "Tests Passed"
             else
                 echo "unexpected behavior"
@@ -67,11 +67,11 @@ jobs:
         run: |
           ./gradlew shadowJar | tee buildResult.txt
           
-          if  grep -q "FAILED" buildResult.txt then
+          if  grep -q "FAILED" buildResult.txt; then
               echo "Build failed"
               exit 1
           else
-            if  grep -q "BUILD SUCCESSFUL" buildResult.txt then
+            if  grep -q "BUILD SUCCESSFUL" buildResult.txt; then
                 echo "Build Passed"
             else
                 echo "unexpected behavior"
