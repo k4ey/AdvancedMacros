@@ -11,18 +11,22 @@ def getVersions():
         f"{HOST}/api/game/versions", 
         headers={"X-Api-Token": os.getenv("CURSE_FORGE_API_TOKEN")
     })
-    return json.loads(response.text)
+    if response.status_code == 200:
+        return json.loads(response.text)
+    raise Exception( f"{response.status_code} {response.text}" )
 
 def getVersionTypes():
     response = requests.get(
         f"{HOST}/api/game/version-types", 
         headers={"X-Api-Token": os.getenv("CURSE_FORGE_API_TOKEN")
     })
-    types = json.loads(response.text)
-    lookup = {}
-    for t in types:
-        lookup[t["id"]] = t
-    return lookup
+    if response.status_code == 200:
+        types = json.loads(response.text)
+        lookup = {}
+        for t in types:
+            lookup[t["id"]] = t
+        return lookup
+    raise Exception( f"{response.status_code} {response.text}" )
 
 def chooseVersionTags( mcVersion, platform ):
     branch = os.getenv("github.event.pull_request.base.ref", os.getenv("GITHUB_REF"))
