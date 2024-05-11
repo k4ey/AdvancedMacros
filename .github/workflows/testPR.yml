@@ -47,3 +47,11 @@ jobs:
                 exit 1
             fi
           fi
+          
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
