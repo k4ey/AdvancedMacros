@@ -23,7 +23,7 @@ jobs:
       - name: Test
         run: |
           sudo apt install openjdk-21-jre
-          export JAVA_HOME=dirname $(dirname $(readlink -f $(which java)))
+          export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
           sudo chmod +x gradlew
 
           ./gradlew test > testResult.txt
