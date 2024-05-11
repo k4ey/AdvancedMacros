@@ -33,8 +33,7 @@ jobs:
       - name: Test
         run: |
           ./gradlew
-          ./gradlew test > testResults.txt
-          cat testResults.txt
+          ./gradlew test | tee testResults.txt
           
           if  grep -q "FAILED" testResults.txt then
               echo "Tests failed"
