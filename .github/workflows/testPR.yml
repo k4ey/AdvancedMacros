@@ -23,12 +23,20 @@ jobs:
       - name: Test
         run: |
           sudo apt install openjdk-21-jre
-          export JAVA_HOME=$(which java)
+          export JAVA_HOME=dirname $(dirname $(readlink -f $(which java)))
           sudo chmod +x gradlew
 
-          if ./gradlew test | grep -q "FAILED"; then
+          ./gradlew test > testResult.txt
+          cat testResults.txt
+          
+          if  grep -q "FAILED" testResult.txt then
               echo "Tests failed"
               exit 1
           else
-              echo "Tests passed"
+            if  grep -q "BUILD SUCCESSFUL" testResult.txt then
+                echo "Tests Passed"
+                exit 1
+            else
+                echo "unexpected behavior"
+            fi
           fi
