@@ -48,14 +48,13 @@ jobs:
       - name: Test
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         run: |
-          ./gradlew test > testResult.txt
-          cat testResults.txt
+          ./gradlew test | tee testResults.txt
           
-          if  grep -q "FAILED" testResult.txt then
+          if  grep -q "FAILED" testResults.txt then
               echo "Tests failed"
               exit 1
           else
-            if  grep -q "BUILD SUCCESSFUL" testResult.txt then
+            if  grep -q "BUILD SUCCESSFUL" testResults.txt then
                 echo "Tests Passed"
             else
                 echo "unexpected behavior"
@@ -66,8 +65,7 @@ jobs:
       - name: Build
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         run: |
-          ./gradlew shadowJar > buildResult.txt
-          cat buildResult.txt
+          ./gradlew shadowJar | tee buildResult.txt
           
           if  grep -q "FAILED" buildResult.txt then
               echo "Build failed"
