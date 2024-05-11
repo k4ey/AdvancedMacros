@@ -17,11 +17,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
-      - name: Install Python
+      - name: Set up Python 3.8
+        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Runnable gradlew
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         run: |
-          sudo apt update
-          sudo apt install -y python3.8
           sudo chmod +x gradlew
 
       - name: Set up JDK 17
