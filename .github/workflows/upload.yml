@@ -30,6 +30,15 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.properties') }}
+      
       - name: Test
         if: github.event.pull_request.merged == true
         run: |
@@ -65,15 +74,6 @@ jobs:
                 echo "unexpected behavior"
             fi
           fi
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            .gradle
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.properties') }}
 
       - name: Upload NeoForge
         if: github.event.pull_request.merged == true
