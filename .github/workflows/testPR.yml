@@ -22,7 +22,7 @@ jobs:
 
       - name: Install
         run: |
-          sudo apt install openjdk-21-jre
+          sudo apt install openjdk-21-jdk
           export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
           sudo chmod +x gradlew
 
