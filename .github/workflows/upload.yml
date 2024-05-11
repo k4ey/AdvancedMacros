@@ -17,11 +17,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
-      - name: Set up Python 3.8
+      - name: Set up Python 3.12
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.12'
 
       - name: Runnable gradlew
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
@@ -82,12 +82,12 @@ jobs:
       - name: Upload NeoForge
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         run: |
-          python38 workflow/upload.py "neoforge" "neoforge/build/libs"
+          python workflow/upload.py "neoforge" "neoforge/build/libs"
           echo "NeoForge jar uploaded"
       
       - name: Upload Fabric
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         run: |
-          python38 workflow/upload.py "fabric" "fabric/build/libs"
+          python workflow/upload.py "fabric" "fabric/build/libs"
 
           echo "NeoForge jar uploaded"
