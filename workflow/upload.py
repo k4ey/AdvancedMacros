@@ -25,7 +25,7 @@ def getVersionTypes():
     return lookup
 
 def chooseVersionTags( mcVersion, platform ):
-    branch = os.getenv("github.event.pull_request.base.ref")
+    branch = os.getenv("github.event.pull_request.base.ref", os.getenv("GITHUB_REF"))
 
     if not infoUtil.checkRegexMatch(mcVersion, branch.replace("x","\d+")):
         raise Exception(f"Target branch {branch} doesn't match current version defined in AM {mcVersion}")
