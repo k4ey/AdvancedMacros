@@ -24,6 +24,7 @@ jobs:
         run: |
           sudo apt install openjdk-21-jre
           export JAVA_HOME=$(which java)
+          sudo chmod +x gradlew
 
           if ./gradlew test | grep -q "FAILED"; then
               echo "Tests failed"
