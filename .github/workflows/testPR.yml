@@ -40,7 +40,7 @@ jobs:
               echo "Tests failed"
               exit 1
           else
-            if  grep -q "BUILD SUCCESSFUL" testResult.txt then
+            if  grep -q "BUILD SUCCESSFUL" testResults.txt then
                 echo "Tests Passed"
             else
                 echo "unexpected behavior"
