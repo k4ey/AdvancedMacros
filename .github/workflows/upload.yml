@@ -71,10 +71,6 @@ jobs:
                 exit 1
             fi
           fi
-      
-      - name: CurseForge Secret
-        env:
-          CURSE_FORGE_API_TOKEN: ${{ secrets.CURSE_FORGE_API_TOKEN }}
 
       - name: Build
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
@@ -95,12 +91,16 @@ jobs:
 
       - name: Upload NeoForge
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+        env:
+          CURSE_FORGE_API_TOKEN: ${{ secrets.CURSE_FORGE_API_TOKEN }}
         run: |
           python workflow/upload.py "neoforge" "neoforge/build/libs"
           echo "NeoForge jar uploaded"
       
       - name: Upload Fabric
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+        env:
+          CURSE_FORGE_API_TOKEN: ${{ secrets.CURSE_FORGE_API_TOKEN }}
         run: |
           python workflow/upload.py "fabric" "fabric/build/libs"
 
