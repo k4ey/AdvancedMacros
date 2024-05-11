@@ -73,6 +73,7 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.properties') }}
 
       - name: Upload NeoForge
         if: github.event.pull_request.merged == true
