@@ -16,6 +16,11 @@ local changeLog = {
   "A clickable link can be found in the Mods menu in this mod's description",
   "&7"..DIVIDER, --keep
   "&b&BChange Log: &7version ".._MOD_VERSION, --do not remove
+  --TODO
+  "&cCHANGE LOG MISSING",
+    
+  "&7"..DIVIDER,
+  "&b&BChange Log: &7version 10.2.0",
     "&bFeatures:",
   " - &blog&f now has an &e&&&f tag &6&&*&f for opening files &7(like screenshots)",
   "   the extra arg used may be a &6string&f &Bor&f &atable&f with fields &6click&f and",
