@@ -26,6 +26,8 @@ def getVersionTypes():
 
 def chooseVersionTags( mcVersion, platform ):
     branch = os.getenv("github.event.pull_request.base.ref", os.getenv("GITHUB_REF"))
+    if branch.startswith("refs/heads/")
+        branch = branch[len("refs/heads/"):]
 
     branchPattern = branch.replace("x",r"\d+").replace(".", r"\.")
     if not infoUtil.checkRegexMatch(mcVersion, branchPattern):
