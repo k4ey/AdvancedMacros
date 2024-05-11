@@ -1,0 +1,89 @@
+name: CurseForge Upload
+
+on:
+  pull_request:
+    branches: [ "1.12.2", "1.14.4", "1.15.2", "1.20.x" ]
+    types: ["closed"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      - name: Install Python
+        if: github.event.pull_request.merged == true
+        run: |
+          sudo apt update
+          sudo apt install -y python3.8
+          sudo chmod +x gradlew
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.properties') }}
+      
+      - name: Test
+        if: github.event.pull_request.merged == true
+        run: |
+          ./gradlew test > testResult.txt
+          cat testResults.txt
+          
+          if  grep -q "FAILED" testResult.txt then
+              echo "Tests failed"
+              exit 1
+          else
+            if  grep -q "BUILD SUCCESSFUL" testResult.txt then
+                echo "Tests Passed"
+                exit 1
+            else
+                echo "unexpected behavior"
+            fi
+          fi
+
+      - name: Build
+        if: github.event.pull_request.merged == true
+        run: |
+          ./gradlew shadowJar > buildResult.txt
+          cat buildResult.txt
+          
+          if  grep -q "FAILED" buildResult.txt then
+              echo "Build failed"
+              exit 1
+          else
+            if  grep -q "BUILD SUCCESSFUL" buildResult.txt then
+                echo "Build Passed"
+                exit 1
+            else
+                echo "unexpected behavior"
+            fi
+          fi
+
+      - name: Upload NeoForge
+        if: github.event.pull_request.merged == true
+        run: |
+          python38 workflow/upload.py "neoforge" "neoforge/build/libs"
+          echo "NeoForge jar uploaded"
+      
+      - name: Upload Fabric
+        if: github.event.pull_request.merged == true
+        run: |
+          python38 workflow/upload.py "fabric" "fabric/build/libs"
+
+          echo "NeoForge jar uploaded"
