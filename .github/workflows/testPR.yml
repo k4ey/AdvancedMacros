@@ -1,0 +1,60 @@
+name: Test PR
+
+on:
+  push:
+    branches: [ "1.12.2", "1.14.4", "1.15.2", "1.20.x" ]
+    types: ["closed"]
+  pull_request:
+    branches: [ "1.12.2", "1.14.4", "1.15.2", "1.20.x" ]
+    types: ["closed"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Install
+        run: |
+          sudo chmod +x gradlew
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.properties') }}
+          restore-keys:
+            gradle-${{ runner.os }}
+            gradle-
+
+
+      - name: Test
+        run: |
+          ./gradlew test | tee testResults.txt
+          
+          if  grep -q "FAILED" testResults.txt; then
+              echo "Tests failed"
+              exit 1
+          else
+            if  grep -q "BUILD SUCCESSFUL" testResults.txt; then
+                echo "Tests Passed"
+            else
+                echo "unexpected behavior"
+                exit 1
+            fi
+          fi
