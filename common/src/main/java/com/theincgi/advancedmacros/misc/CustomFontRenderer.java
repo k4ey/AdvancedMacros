@@ -188,7 +188,8 @@ public class CustomFontRenderer {
 
         double dx = tx, dy = ty;
         int lineNum = 0;
-        mc.getTextureManager().bindTexture(consolas.getResourceLocation());
+        consolas.bindTexture();
+//        mc.getTextureManager().bindTexture(consolas.getResourceLocation());
         //System.out.printf("TX: %5.2f TY: %5.2f TZ: %5.2f   UP: %s RIGHT: %s\n",tx,ty,tz,upVect,rightVect);
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
