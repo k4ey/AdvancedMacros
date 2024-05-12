@@ -143,6 +143,8 @@ if __name__ == "__main__":
     
     jarName = f"advanced-macros-{modInfo["VERSION"]}-for-{platform}-minecraft-{modInfo["GAME_VERSION"]}.jar"
 
+
+    print("Auto Upload: " + str( os.getenv("ENABLE_AUTO_UPLOAD").lower() ))
     if os.getenv("ENABLE_AUTO_UPLOAD").lower() == "true":
         upload_file(projectID, metadata, jarName, filePath)
     else:
