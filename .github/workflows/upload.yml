@@ -93,7 +93,7 @@ jobs:
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         env:
           CURSE_FORGE_API_TOKEN: ${{ secrets.CURSE_FORGE_API_TOKEN }}
-          ENABLE_AUTO_UPLOAD: ${{ env.ENABLE_AUTO_UPLOAD }}
+          ENABLE_AUTO_UPLOAD: ${{ vars.ENABLE_AUTO_UPLOAD }}
         run: |
           python workflow/upload.py "neoforge" "neoforge/build/libs"
           echo "NeoForge jar uploaded"
@@ -102,7 +102,7 @@ jobs:
         if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         env:
           CURSE_FORGE_API_TOKEN: ${{ secrets.CURSE_FORGE_API_TOKEN }}
-          ENABLE_AUTO_UPLOAD: ${{ env.ENABLE_AUTO_UPLOAD }}
+          ENABLE_AUTO_UPLOAD: ${{ vars.ENABLE_AUTO_UPLOAD }}
         run: |
           python workflow/upload.py "fabric" "fabric/build/libs"
 
