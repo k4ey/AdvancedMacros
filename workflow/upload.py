@@ -50,6 +50,8 @@ def chooseVersionTags( mcVersion, platform ):
         name = v["name"]
         id = v["id"]
         tinfo = types.get( v["gameVersionTypeID"] )
+        if not tinfo or tinfo["name"].lower() == "addons":
+            continue
         typeName = tinfo["name"] if tinfo else "?"
         tagName = f"{name} ({typeName})"
 
