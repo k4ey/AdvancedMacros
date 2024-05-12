@@ -94,6 +94,7 @@ jobs:
         env:
           CURSE_FORGE_API_TOKEN: ${{ secrets.CURSE_FORGE_API_TOKEN }}
           ENABLE_AUTO_UPLOAD: ${{ vars.ENABLE_AUTO_UPLOAD }}
+          upload_url: ${{ secrets.upload_url }}
         run: |
           python workflow/upload.py "neoforge" "neoforge/build/libs"
           echo "NeoForge jar uploaded"
@@ -103,6 +104,7 @@ jobs:
         env:
           CURSE_FORGE_API_TOKEN: ${{ secrets.CURSE_FORGE_API_TOKEN }}
           ENABLE_AUTO_UPLOAD: ${{ vars.ENABLE_AUTO_UPLOAD }}
+          upload_url: ${{ secrets.upload_url }}
         run: |
           python workflow/upload.py "fabric" "fabric/build/libs"
 
