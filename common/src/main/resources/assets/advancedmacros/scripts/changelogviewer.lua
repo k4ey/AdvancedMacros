@@ -17,8 +17,14 @@ local changeLog = {
   "A clickable link can be found in the Mods menu in this mod's description",
   "&7"..DIVIDER, --keep
   "&b&BChange Log: &7version ".._MOD_VERSION, --do not remove
-  --TODO
-  "&cCHANGE LOG MISSING",
+  
+  "&c&BAlpha build",
+  "  &fThis is an &calpha build&f, there may be some features which may not work as expected",
+  "  &7It's also the first version available for MC 1.20.4&f",
+  "  You can submit bug reports at &bgithub.com/AdvancedMacros/AdvancedMacros/issues&f",
+  "  or in the &6AM&f discord's &7#bug_reports&f channel",
+  "  ",
+  "  &aSpecial thanks&f to everyone who contributed to this version.",
     
   "&7"..DIVIDER,
   "&b&BChange Log: &7version 10.2.0",

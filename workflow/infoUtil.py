@@ -72,6 +72,7 @@ def getChangeLog(modVersion):
         for i = 1, 4 do
             table.remove(changeLog, 1)
         end
+        table.insert(changeLog, 1, "[This build was uploaded via Github Actions]")
         print( table.concat( changeLog, '\\n'))
     """)
 
