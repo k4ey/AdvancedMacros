@@ -16,18 +16,11 @@ public class AdvancedMacrosForge {
 
     public AdvancedMacrosForge() {
         AdvancedMacros.init();
-        NeoForge.EVENT_BUS.addListener(AdvancedMacrosForge::onTick);
     }
 
     @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {
         event.register(AdvancedMacros.modKeybind);
-    }
-
-    public static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            EventHandler.onTick(MinecraftClient.getInstance());
-        }
     }
 
 }

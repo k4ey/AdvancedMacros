@@ -171,10 +171,6 @@ public class EventHandler {
         ;//	TEST;
     }
 
-    public static void onTick(MinecraftClient client) {
-        TaskDispatcher.runTasks();
-    }
-
     public void onKeyInput(int key, int scancode, int action, int mods) {
         if (AdvancedMacros.modKeybind.isPressed()) {
             if (ColorTextArea.isCTRLDown()) {
@@ -242,6 +238,7 @@ public class EventHandler {
 
     MinecraftClient minecraft = MinecraftClient.getInstance();
     public void onPlayerTick() {
+        TaskDispatcher.runTasks();
         synchronized (sTickSync) {
             sTick++;
             synchronized (tickLock) {
