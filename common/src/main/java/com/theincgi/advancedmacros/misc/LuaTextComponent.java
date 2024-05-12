@@ -17,30 +17,42 @@ public class LuaTextComponent implements Text {
     private LuaValue action;
     private boolean allowHover;
 
-    private final MutableText internalText;
+    private final Text internalText;
 
     public LuaTextComponent(String text, LuaValue action, boolean allowHover) {
-        internalText = Text.literal(text);
-        this.text = text;
-        this.action = action;
-        this.allowHover = allowHover;
-        if (action.isCallable()) {
-            internalText.setStyle(getStyle().withClickEvent(new LuaTextComponentClickEvent(action, this)));
-        }
-        if ((action.isstring() || action.istable()) && allowHover) {
-            if (action.istable() && !action.get("click").isnil()) {
-                if (!action.get("click").isCallable()) {
-                    throw new LuaError("'click' value of clickable text component table must be callable.");
-                }
-                internalText.setStyle(getStyle().withClickEvent(new LuaTextComponentClickEvent(action.get("click"), this)));
-            }
-            if (action.istable() && !action.get("hover").isnil()) {
-                internalText.setStyle(getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Utils.toTextComponent(action.get("hover").tojstring(), null, false).a)));
-            } else {
-                internalText.setStyle(getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Utils.toTextComponent(action.tojstring(), null, false).a)));
-            }
-        }
-
+    	this(text, action, allowHover, null);
+    }
+	public LuaTextComponent(String text, LuaValue action, boolean allowHover, Style style) {
+		this.text = text;
+		this.action = action;
+		this.allowHover = allowHover;
+		style = style == null ? Style.EMPTY : style; 
+		if (action.isCallable()) {
+			style = style.withClickEvent(new LuaTextComponentClickEvent(action, this));
+		}
+		
+		if ((action.isstring() || action.istable()) && allowHover) {
+			if (action.istable() && !action.get("click").isnil()) {
+				if (!action.get("click").isCallable()) {
+					throw new LuaError("'click' value of clickable text component table must be callable.");
+				}
+				style = style.withClickEvent(new LuaTextComponentClickEvent(action.get("click"), this));
+			}
+			if (action.istable() && !action.get("hover").isnil()) {
+				style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Utils.toTextComponent(action.get("hover").tojstring(), null, false).a));
+			} else {
+				style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Utils.toTextComponent(action.tojstring(), null, false).a));
+			}
+		}
+        
+		internalText = style == null ? Text.literal(text) : Text.literal(text).getWithStyle(style).get(0);
+    }
+    
+    @Override
+    public List<Text> getWithStyle(Style style) {
+    	return List.of(
+			new LuaTextComponent(text, action, allowHover, style)
+    	);
     }
 
     @Override

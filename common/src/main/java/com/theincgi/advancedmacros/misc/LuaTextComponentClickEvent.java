@@ -11,7 +11,7 @@ public class LuaTextComponentClickEvent extends ClickEvent {
     private final LuaTextComponent ltc;
 
     public LuaTextComponentClickEvent(LuaValue onClick, LuaTextComponent ltc) {
-        super(null, ltc.getString());
+        super(null, ltc.getText());
         this.ltc = ltc;
         this.onClick = onClick;
     }

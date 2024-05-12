@@ -41,6 +41,7 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -1083,69 +1084,187 @@ public class Utils {
     public static Pair<MutableText, Varargs> toTextComponent(String codedText, Varargs args, boolean allowHover) {
         return toTextComponent(codedText, args, allowHover, true);
     }
-
-    //TODO 1.19 Update: Fix the style with functions
+    
     public static Pair<MutableText, Varargs> toTextComponent(String codedText, Varargs args, boolean allowHover, boolean allowFunctions) {
-        if (args == null) {
-            args = new LuaTable().unpack();
-        }
-        MutableText out = Text.literal("");
-        StringBuilder temp = new StringBuilder();
-        Boolean bold = null, italics = null, obfusc = null, strike = null, underline = null;
-        Formatting color = null;
-        Style pStyle = out.getStyle();
-        pStyle.withBold(false);
-        pStyle.withItalic(false);
-        pStyle.withObfuscated(false);
-        pStyle.withStrikethrough(false);
-        pStyle.withUnderline(false);
-        out.setStyle(pStyle);
-        //lua text component ce? click event?
-        boolean ltcce = false;
-        int argNum = 1;
-        ClickEvent clickEvent = null;
-        HoverEvent hoverEvent = null;
-        for (int i = 0; i < codedText.length(); i++) {
-            char c = codedText.charAt(i);
-            if (c != '&') {
-                temp.append(c);
-            } else {
-                if (i == codedText.length()) {
-                  break;
-                }
-                char next = codedText.charAt(i + 1);
-                if (next == '&') {
-                  temp.append('&');
-                } else {
-                  temp.append('§');
-                  temp.append(next);
-                }
-                i++;
-            }
-        }
-        if (temp.length() > 0) {
-            Text component = ltcce && allowFunctions ? new LuaTextComponent(temp.toString(), args.arg(argNum++), allowHover) : Text.literal(temp.toString());
-            Style style = component.getStyle();
-            style.withBold(bold);
-            style.withItalic(italics);
-            style.withObfuscated(obfusc);
-            style.withStrikethrough(strike);
-            style.withUnderline(underline);
-            //style.withColor(color);
-            style.withParent(pStyle);
-            if (clickEvent != null) {
-                style.withClickEvent(clickEvent);
-            }
-            out.append(component);
-            if (hoverEvent != null) {
-                style.withHoverEvent(hoverEvent);
-            }
-            temp = new StringBuilder();
-            pStyle = component.getStyle();
-        }
+		if(args == null) args = new LuaTable().unpack();
+		MutableText out = Text.literal("");
+		StringBuilder temp = new StringBuilder();
+		Boolean bold = null, italics = null, obfusc = null, strike = null, underline = null;
+		Formatting color = null;
+		Style pStyle = out.getStyle();
+		pStyle = pStyle.withBold(false);
+		pStyle = pStyle.withItalic(false);
+		pStyle = pStyle.withObfuscated(false);
+		pStyle = pStyle.withStrikethrough(false);
+		pStyle = pStyle.withUnderline(false);
+		//lua text component ce? click event?
+		boolean ltcce = false;
+		int argNum = 1;
+		ClickEvent clickEvent = null;
+		HoverEvent hoverEvent = null;
+		for(int i = 0; i<codedText.length(); i++) {
+			char c = codedText.charAt(i);
+			if(c!='&')
+				temp.append(c);
+			else {
+				if(i<codedText.length()-1) {
+					char next = codedText.charAt(i+1);
+					if(next == '&') {
+						temp.append(next);
+						i++;
+					}else if(isTextColorCode(next) || isTextStyleCode(next) || isSpecialCode(next) || next == '&') {
+						i++;
+						if(temp.length() > 0) {
+							Text component = ltcce && allowFunctions? 
+									new LuaTextComponent(temp.toString(), args.arg(argNum++), allowHover) : Text.literal(temp.toString());
+							
+							Style style = component.getStyle();
+							style = style.withBold(bold);
+							style = style.withItalic(italics);
+							style = style.withObfuscated(obfusc);
+							style = style.withStrikethrough(strike);
+							style = style.withUnderline(underline);
+							style = style.withColor(color);
+							style = style.withParent(pStyle);
+							if(clickEvent != null)
+								style = style.withClickEvent(clickEvent);
+							if (hoverEvent != null) 
+								style = style.withHoverEvent(hoverEvent);
+							bold = italics = obfusc = strike = underline = null;
+							//color = null;
+							ltcce = false;
+							clickEvent = null;
+							hoverEvent = null;
+							temp = new StringBuilder();
+							component = component.getWithStyle(style).get(0);
+							out.append(component);
+							pStyle = component.getStyle();
+						}
+						if (isTextColorCode(next)) {
+							color = getTextFormatingColor(next);
+							bold = italics = obfusc = strike = underline = false;
+						}/*else if(next == 'x') { //custom color
+							color = parseColor(args.arg(argNum++));
+							bold = italics = obfusc = strike = underline = false;
+						}*/else if(isTextStyleCode(next)) {
+							switch (next) {
+							case 'B':
+								bold = true;
+								break;
+							case 'I':
+								italics = true;
+								break;
+							case 'O':
+								obfusc = true;
+								break;
+							case 'S':
+								strike = true;
+								break;
+							case 'U':
+								underline = true;
+								break;
+							default:
+								break;
+							}
+						}else if(next == 'F') { //Function/table
+							ltcce = true;
+						}else if(next == 'R') { //execute
+							String cText, hText;
+							if(args.arg(argNum).istable() && !args.arg(argNum).get("click").isnil())
+								cText = args.arg(argNum).get("click").tojstring();
+							else
+								cText = args.arg(argNum).tojstring();
 
-        return new Pair<>(out, args.subargs(argNum));
-    }
+
+							if(args.arg(argNum).istable() && !args.arg(argNum).get("hover").isnil())
+								hText = args.arg(argNum).get("hover").tojstring();
+							else
+								hText = "Run: &b"+cText;
+							argNum++;
+							clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, cText);
+							hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, toTextComponent(hText, null, false, false).a);
+						}else if(next == 'T') { //type (suggest)
+							String cText, hText;
+							if(args.arg(argNum).istable() && !args.arg(argNum).get("click").isnil())
+								cText = args.arg(argNum).get("click").tojstring();
+							else
+								cText = args.arg(argNum).tojstring();
+
+
+							if(args.arg(argNum).istable() && !args.arg(argNum).get("hover").isnil())
+								hText = args.arg(argNum).get("hover").tojstring();
+							else
+								hText = "Type: &b"+cText;
+							argNum++;
+							clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, cText);
+							hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, toTextComponent(hText, null, false, false).a);
+						}else if(next == 'L') { //Link
+							String cText, hText;
+							if(args.arg(argNum).istable() && !args.arg(argNum).get("click").isnil())
+								cText = args.arg(argNum).get("click").tojstring();
+							else
+								cText = args.arg(argNum).tojstring();
+
+
+							if(args.arg(argNum).istable() && !args.arg(argNum).get("hover").isnil())
+								hText = args.arg(argNum).get("hover").tojstring();
+							else
+								hText = "URL: &b&U"+cText;
+							argNum++;
+							if(!cText.matches("^https?://"))
+								cText = "https://" + cText;
+							clickEvent = new ClickEvent(ClickEvent.Action.OPEN_URL, cText);
+							hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, toTextComponent(hText, null, false, false).a);
+						}else if(next == 'N') {
+							String hText;
+
+							if(args.arg(argNum).istable() && !args.arg(argNum).get("hover").isnil())
+								hText = args.arg(argNum).get("hover").tojstring();
+							else
+								hText = args.arg(argNum).tojstring();
+							argNum++;
+
+							hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, toTextComponent(hText, null, false, false).a);
+						}else if(next == '*') {
+							String file, tooltip;
+							if(args.arg(argNum).istable()) {
+								LuaTable table = args.arg(argNum).checktable();
+								file = table.get("click").tojstring();
+								tooltip = table.get("hover").isnil()? null : table.get("hover").tojstring();
+							}else {
+								file = args.arg(argNum).tojstring();
+								tooltip = (new File(file).exists()?"&a":"&c") + file;
+							}
+							argNum++;
+							
+							clickEvent = new ClickEvent(ClickEvent.Action.OPEN_FILE, file);
+							if(tooltip != null)
+								hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, toTextComponent(tooltip, null, false, false).a);
+						}
+					}
+				}
+			}
+		}
+		if(temp.length() > 0) {
+			Text component = ltcce && allowFunctions? new LuaTextComponent(temp.toString(), args.arg(argNum++), allowHover) : Text.literal(temp.toString());
+			Style style = component.getStyle();
+			style = style.withBold(bold);
+			style = style.withItalic(italics);
+			style = style.withObfuscated(obfusc);
+			style = style.withStrikethrough(strike);
+			style = style.withUnderline(underline);
+			style = style.withColor(color);
+			style = style.withParent(pStyle);
+			if(clickEvent != null)
+				style = style.withClickEvent(clickEvent);
+			if (hoverEvent != null) 
+				style = style.withHoverEvent(hoverEvent);
+			temp = new StringBuilder();
+			out.append(component.getWithStyle(style).get(0));
+			pStyle = component.getStyle();
+		}
+		return new Pair<MutableText, Varargs>(out, args.subargs(argNum));
+	}
 
     public static Pair<String, LuaTable> codedFromTextComponent(Text message) {
         return codedFromTextComponent(message, true);

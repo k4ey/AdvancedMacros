@@ -24,7 +24,7 @@ public class ScriptGuiText extends ScriptGuiElement {
 
     public int textSize = 12;
     private String text = "";
-    public boolean monospaced = false;
+    public boolean monospaced = true;
 
     public ScriptGuiText(Gui gui, Group parent) {
         super(gui, parent);
@@ -76,6 +76,8 @@ public class ScriptGuiText extends ScriptGuiElement {
         RenderSystem.bindTexture(0);
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.enableColorLogicOp();
+        
         //RenderSystem.enableAlphaTest();
         RenderSystem.defaultBlendFunc();
         //FontRenderer fr = MinecraftClient.getInstance().fontRenderer;

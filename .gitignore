@@ -17,3 +17,13 @@ out/
 run/
 /.vscode
 /workflow/__pycache__
+.project
+/.settings
+/common/.settings
+fabric/.classpath
+common/.classpath
+/fabric/.settings
+*.launch
+neoforge/.classpath
+neoforge/.settings/org.eclipse.buildship.core.prefs
+neoforge/.settings/org.eclipse.jdt.core.prefs

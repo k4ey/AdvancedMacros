@@ -27,11 +27,6 @@ public class LuaValTexture extends LuaValue {
         r = Settings.fromDynamic(name, dTex);
     }
 
-    public LuaValTexture(NativeImageBackedTexture dTex) {
-        super();
-        this.dTex = dTex;
-    }
-
     public LuaValTexture(String name, Identifier r) {
         super();
         this.name = name;
