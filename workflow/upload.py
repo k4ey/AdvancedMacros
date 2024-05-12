@@ -88,17 +88,20 @@ def chooseVersionTags( mcVersion, platform ):
     
 
 def upload_file(project_id, metadata, fileName, filePath):
-    url = f"{os.getenv("upload_url")}/api/projects/{project_id}/upload-file"
+    url = f"{HOST}/api/projects/{project_id}/upload-file"
 
     metadataJson = json.dumps(metadata)
+    data = {
+        'metadata': metadataJson,
+        'file': (fileName, open(filePath, 'rb'))
+    }
 
     response = requests.post(
         url, 
-        files={
-            'metadata': metadataJson,
-            'file': (fileName, open(filePath, 'rb'))
-        },
-        headers={"X-Api-Token": CF_TOKEN}
+        files=data,
+        headers = {
+            "X-Api-Token": CF_TOKEN
+        }
     )
 
     if response.status_code == 200:
