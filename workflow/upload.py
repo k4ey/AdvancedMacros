@@ -104,7 +104,7 @@ def upload_file(project_id, metadata, fileName, filePath):
 
     if response.status_code == 200:
         print("File uploaded successfully.")
-        print(response.text)
+        print( f"{response.status_code} {response.text}" )
     else:
         print("Failed to upload file.")
         raise Exception( f"{response.status_code} {response.text}" )
