@@ -3,6 +3,7 @@ local args = {...}
 local settings = getSettings()
 settings.changeLog = settings.changeLog or {}
 local cl = settings.changeLog
+cl.showOnStartup = cl.showOnStartup==nil or cl.showOnStartup
 if not cl.showOnStartup then return end
 cl.shownVersions = cl.shownVersions or {}
 if cl.shownVersions[_MOD_VERSION] and args[1]~="force" then return end
