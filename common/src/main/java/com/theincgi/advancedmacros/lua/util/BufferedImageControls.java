@@ -227,7 +227,7 @@ public class BufferedImageControls extends LuaTable {
                         return;
                     }
                     dynamicTexture = new NativeImageBackedTexture(img.getWidth(), img.getHeight(), true);
-                    tex = new LuaValTexture(dynamicTexture);
+                    tex = new LuaValTexture("am_img_", dynamicTexture);
                     updateTexture();
 
                 }
