@@ -107,6 +107,7 @@ def upload_file(project_id, metadata, fileName, filePath):
         print(response.text)
     else:
         print("Failed to upload file.")
+        raise Exception( f"{response.status_code} {response.text}" )
 
 def chooseJar( libsDir ):
     for opt in os.listdir( libsDir ):
@@ -126,7 +127,7 @@ if __name__ == "__main__":
 
     metadata = {
         "changelog": infoUtil.getChangeLog( modInfo["VERSION"] ), # Can be HTML or markdown if changelogType is set.
-        "changelogType": "text", # Optional: defaults to text
+        # "changelogType": "text", # Optional: defaults to text
         "displayName": f"Advanced Macros {modInfo["VERSION"]} for {platform} Minecraft {modInfo["GAME_VERSION"]}", # Optional: A friendly display name used on the site if provided.
         #parentFileID: 42, # Optional: The parent file of this file.
         "gameVersions": chooseVersionTags( modInfo["GAME_VERSION"], platform ), # A list of supported game versions, see the Game Versions API for details. Not supported if parentFileID is provided.
