@@ -91,7 +91,7 @@ def upload_file(project_id, metadata, fileName, filePath):
     metadataJson = json.dumps(metadata)
     data = {
         'metadata': metadataJson,
-        fileName : open(filePath, 'rb')
+        'file': (fileName, open(filePath, 'rb'))
     }
 
     response = requests.post(
@@ -132,13 +132,13 @@ if __name__ == "__main__":
         #parentFileID: 42, # Optional: The parent file of this file.
         "gameVersions": chooseVersionTags( modInfo["GAME_VERSION"], platform ), # A list of supported game versions, see the Game Versions API for details. Not supported if parentFileID is provided.
         "releaseType": modInfo["releaseType"], # One of "alpha", "beta", "release".
-        # relations:
+        # "relations":
         # {
-        #     projects: 
-        #     [{
-        #         slug: "mantle", # Slug of related plugin.
-        #         type: ["embeddedLibrary", "incompatible", "optionalDependency", "requiredDependency", "tool"] # Choose one
-        #     }]
+        #     "projects": [] 
+        #     # [{
+        #     #     slug: "mantle", # Slug of related plugin.
+        #     #     type: ["embeddedLibrary", "incompatible", "optionalDependency", "requiredDependency", "tool"] # Choose one
+        #     # }]
         # } # Optional: An array of project relations by slug and type of dependency for inclusion in your project.
     }
     
