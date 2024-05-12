@@ -1,23 +1,16 @@
 name: Test PR
 
 on:
-  push:
-    branches: [ "1.12.2", "1.14.4", "1.15.2", "1.20.x" ]
-    types: ["closed"]
   pull_request:
     branches: [ "1.12.2", "1.14.4", "1.15.2", "1.20.x" ]
-    types: ["closed"]
-
-  # Allows you to run this workflow manually from the Actions tab
+    types: [opened, synchronize]
   workflow_dispatch:
-
+  
 jobs:
-  # This workflow contains a single job called "build"
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
       - name: Set up JDK 17
@@ -41,7 +34,6 @@ jobs:
           restore-keys:
             gradle-${{ runner.os }}
             gradle-
-
 
       - name: Test
         run: |
