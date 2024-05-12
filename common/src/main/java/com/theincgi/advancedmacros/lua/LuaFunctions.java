@@ -105,26 +105,16 @@ public class LuaFunctions {
         String activeColor = "white";
         String parsed;                                        //looks like ---> [""
 
-        private void appendSegment() {
-            parsed += "," + textHeader + fragment + singalQuote;       //text
-            if (bold) {
-                parsed += BOLD_SEGMENT;
-            }   //bold
-            if (italics) {
-                parsed += ITALIC_SEGMENT;
-            }   //italics
-            if (underline) {
-                parsed += UNDERLINE_SEGMENT;
-            }   //underline
-            if (strikethru) {
-                parsed += STRIKETHRU_SEGMENT;
-            }   //strikethru
-            if (obfuscate) {
-                parsed += OBFUSCATE_SEGMENT;
-            }   //obfuscate
-            parsed += colorHeader + activeColor + singalQuote + "}";   //color
-            fragment = "";
-        }
+        private void appendSegment(){
+			parsed += ","+textHeader+fragment+singalQuote;       //text
+			if(bold			){ parsed += BOLD_SEGMENT; 		 }   //bold
+			if(italics		){ parsed += ITALIC_SEGMENT; 	 }   //italics
+			if(underline	){ parsed += UNDERLINE_SEGMENT;  }   //underline
+			if(strikethru	){ parsed += STRIKETHRU_SEGMENT; }   //strikethru
+			if(obfuscate	){ parsed += OBFUSCATE_SEGMENT;  }   //obfuscate
+			parsed += colorHeader+activeColor+singalQuote+"}";   //color
+			fragment = "";
+		}
 
         private void resetFormat() {
             //reset values
@@ -138,11 +128,14 @@ public class LuaFunctions {
         @Override
         public Varargs invoke(Varargs arg0) {
             try {
-
                 // tricky way to avoid mixin for chat logging getting fired (it injects at event with just message arg so we supply this manually.)
                 // if the implementation inside net.minecraft.client.gui.hud.ChatHud.addMessage(net.minecraft.text.Text)
                 // then we have to adjust it to match
-                MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(formatString(arg0), null, MinecraftClient.getInstance().isConnectedToLocalServer() ? MessageIndicator.singlePlayer() : MessageIndicator.system());
+                MinecraftClient.getInstance()
+                	.inGameHud.getChatHud()
+                	.addMessage(
+                		formatString(arg0), null, 
+                		MinecraftClient.getInstance().isConnectedToLocalServer() ? MessageIndicator.singlePlayer() : MessageIndicator.system());
             } catch (LuaError err) {
                 throw err;
             } catch (Throwable e) {
@@ -156,16 +149,13 @@ public class LuaFunctions {
             String toParse;
             MutableText out = null;
             if (arg0.arg1() instanceof LuaText) return ((LuaText) arg0.arg1()).getMessage();
-            for (int i = 1; arg0.narg() > 0; i++) {
+            while(arg0 != null && arg0.narg() > 0) {
                 LuaValue arg = arg0.arg1();
                 Pair<MutableText, Varargs> pair;
 
                 if (arg.istable()) {
                     Varargs args = arg0.subargs(2);
-                    if (args == null) {
-                        args = new LuaTable().unpack();
-                    }
-                    pair = new Pair<>(Text.literal(formatTableForLog(arg.checktable())), args.subargs(1));
+                    pair = new Pair<>(Text.literal(formatTableForLog(arg.checktable())), args);
                 } else {
                     toParse = arg.tojstring();
                     pair = Utils.toTextComponent(toParse, arg0.subargs(2), true);
