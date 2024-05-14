@@ -76,8 +76,7 @@ public class ScriptGuiText extends ScriptGuiElement {
         RenderSystem.bindTexture(0);
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.enableColorLogicOp();
-        
+
         //RenderSystem.enableAlphaTest();
         RenderSystem.defaultBlendFunc();
         //FontRenderer fr = MinecraftClient.getInstance().fontRenderer;

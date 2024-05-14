@@ -26,10 +26,11 @@ public class GuiRectangle extends ScriptGuiElement {
         if (!visible) {
             return;
         }
-
-        drawRectangle(x, y, wid, hei, color, z);
+        
+        drawRectangle(drawContext, x, y, wid, hei, color, z);
+//        drawContext.fill((int)x, (int)y, (int)(x+wid), (int)(y+hei), color.toInt());
         if (getHoverTint() != null && GuiRect.isInBounds(mouseX, mouseY, (int) x, (int) y, (int) wid, (int) hei)) {
-            drawRectangle(x, y, wid, hei, getHoverTint(), z);
+            drawRectangle(drawContext, x, y, wid, hei, getHoverTint(), z);
         }
     }
 
@@ -53,25 +54,27 @@ public class GuiRectangle extends ScriptGuiElement {
         this.hei = i;
     }
 
-    public static void drawRectangle(float dx, float dy, float dw, float dh, Color color, float z) {
+    public static void drawRectangle(DrawContext c, float dx, float dy, float dw, float dh, Color color, float z) {
+    	fill( c, dx, dy, dx+dw, dy+dh, z, color.toInt());
         //RenderSystem.enableBlend();
         //RenderSystem.enableAlpha();
         //		RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(color.getR() / 255f, color.getG() / 255f, color.getB() / 255f, color.getA() / 255f);
-        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-        RenderSystem.disableBlend();
-        RenderSystem.enableBlend();
-        //RenderSystem.disableTexture2D();
-        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
-        //TODO 1.19 Update: RenderSystem.disableAlphaTest();
-        //TODO 1.19 Update: RenderSystem.enableAlphaTest();
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION); //7 is GL_QUADS btw
-        buffer.vertex(dx, dy, z).next(); //bottom left -> bottom right -> top right -> top left
-        buffer.vertex(dx, dy + dh, z).next(); //top left
-        buffer.vertex(dx + dw, dy + dh, z).next(); //top right
-        buffer.vertex(dx + dw, dy, z).next(); //bottom right
-
-        Tessellator.getInstance().draw();
+//        RenderSystem.setShaderColor(color.getR() / 255f, color.getG() / 255f, color.getB() / 255f, color.getA() / 255f);
+//        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+//        RenderSystem.disableBlend();
+//        RenderSystem.enableBlend();
+//        //RenderSystem.disableTexture2D();
+//        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
+//        
+//        //TODO 1.19 Update: RenderSystem.disableAlphaTest();
+//        //TODO 1.19 Update: RenderSystem.enableAlphaTest();
+//        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION); //7 is GL_QUADS btw
+//        buffer.vertex(dx, dy, z).next(); //bottom left -> bottom right -> top right -> top left
+//        buffer.vertex(dx, dy + dh, z).next(); //top left
+//        buffer.vertex(dx + dw, dy + dh, z).next(); //top right
+//        buffer.vertex(dx + dw, dy, z).next(); //bottom right
+//
+//        Tessellator.getInstance().draw();
         //RenderSystem.disableBlend();
         // RenderSystem.disableBlend();
         // Gui.drawRect((int)dx, (int)dy, (int)dx+dw, (int)dy+dh, color.toInt());
