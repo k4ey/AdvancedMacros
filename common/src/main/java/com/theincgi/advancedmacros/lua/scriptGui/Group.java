@@ -334,7 +334,12 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
     //		element.set("getParent", controls);
     //	}
     public void setParentControls(LuaTable element) {
-        element.set("getParent", this); //TODO inspect
+        element.set("getParent", new ZeroArgFunction() {	
+			@Override
+			public LuaValue call() {
+				return this;
+			}
+		}); //TODO inspect
     }
 
     @Override

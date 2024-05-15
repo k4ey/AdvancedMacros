@@ -44,6 +44,7 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
     float z;
     public float wid, hei;
     private boolean mouseWasOver = false;
+    private boolean mouseIsOver = false;
     boolean visible = true;
     private Group parent;
     Object hoverTintLock = new Object();
@@ -249,7 +250,7 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
         this.set("isHover", new ZeroArgFunction() {
             @Override
             public LuaValue call() {
-                return LuaValue.valueOf(mouseWasOver);
+                return LuaValue.valueOf(mouseIsOver);
             }
         });
 
@@ -366,8 +367,10 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
         boolean now = GuiButton.isInBounds(mouseX, mouseY, (int) x, (int) y, (int) wid, (int) hei);
         if (now != mouseWasOver) {
             if (now) {
+            	mouseIsOver = true;
                 onMouseEnter();
             } else {
+            	mouseIsOver = false;
                 onMouseExit();
             }
             mouseWasOver = now;
@@ -376,31 +379,31 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
     }
     
     public static void fill(DrawContext ctx, float x1, float y1, float x2, float y2, float z, int color) {
-    	fill(ctx, (int)x1,  (int)y1, (int) x2,  (int)y2, z, color);
+//    	fill(ctx, (int)x1,  (int)y1, (int) x2,  (int)y2, z, color);
     	
-//    	RenderLayer layer = RenderLayer.getGui();
-//        float i;
-//        Matrix4f matrix4f = ctx.getMatrices().peek().getPositionMatrix();
-//        if (x1 < x2) {
-//            i = x1;
-//            x1 = x2;
-//            x2 = i;
-//        }
-//        if (y1 < y2) {
-//            i = y1;
-//            y1 = y2;
-//            y2 = i;
-//        }
-//        float f = (float)ColorHelper.Argb.getAlpha(color) / 255.0f;
-//        float g = (float)ColorHelper.Argb.getRed(color) / 255.0f;
-//        float h = (float)ColorHelper.Argb.getGreen(color) / 255.0f;
-//        float j = (float)ColorHelper.Argb.getBlue(color) / 255.0f;
-//        VertexConsumer vertexConsumer = ctx.getVertexConsumers().getBuffer(layer);
-//        vertexConsumer.vertex(matrix4f, x1, y1, z).color(g, h, j, f).next();
-//        vertexConsumer.vertex(matrix4f, x1, y2, z).color(g, h, j, f).next();
-//        vertexConsumer.vertex(matrix4f, x2, y2, z).color(g, h, j, f).next();
-//        vertexConsumer.vertex(matrix4f, x2, y1, z).color(g, h, j, f).next();
-//        ctx.draw();
+    	RenderLayer layer = RenderLayer.getGui();
+        float i;
+        Matrix4f matrix4f = ctx.getMatrices().peek().getPositionMatrix();
+        if (x1 < x2) {
+            i = x1;
+            x1 = x2;
+            x2 = i;
+        }
+        if (y1 < y2) {
+            i = y1;
+            y1 = y2;
+            y2 = i;
+        }
+        float f = (float)ColorHelper.Argb.getAlpha(color) / 255.0f;
+        float g = (float)ColorHelper.Argb.getRed(color) / 255.0f;
+        float h = (float)ColorHelper.Argb.getGreen(color) / 255.0f;
+        float j = (float)ColorHelper.Argb.getBlue(color) / 255.0f;
+        VertexConsumer vertexConsumer = ctx.getVertexConsumers().getBuffer(layer);
+        vertexConsumer.vertex(matrix4f, x1, y1, z).color(g, h, j, f).next();
+        vertexConsumer.vertex(matrix4f, x1, y2, z).color(g, h, j, f).next();
+        vertexConsumer.vertex(matrix4f, x2, y2, z).color(g, h, j, f).next();
+        vertexConsumer.vertex(matrix4f, x2, y1, z).color(g, h, j, f).next();
+        ctx.draw();
     }
 
     public static void resetMouseOver() {
