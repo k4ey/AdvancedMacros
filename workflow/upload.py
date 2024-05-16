@@ -90,9 +90,11 @@ def chooseVersionTags( mcVersion, platform ):
 def upload_file(project_id, metadata, fileName, filePath):
     url = f"{HOST}/api/projects/{project_id}/upload-file"
 
-    metadataJson = json.dumps(metadata)
-    data = {
-        'metadata': metadataJson,
+    headers = {
+        "X-Api-Token": CF_TOKEN
+    }
+    meta = {
+        'metadata': json.dumps(metadata, ensure_ascii=False),
     }
     files = {
         'file': (fileName, open(filePath, 'rb'))
@@ -100,11 +102,9 @@ def upload_file(project_id, metadata, fileName, filePath):
 
     response = requests.post(
         url, 
-        data  = data,
-        files = files,
-        headers = {
-            "X-Api-Token": CF_TOKEN
-        }
+        headers = headers,
+        data  = meta,
+        files = files
     )
 
     if response.status_code == 200:
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     filePath = chooseJar( libsDir )
 
 
-    projectID = "advanced-macros"
+    projectID = "274613"
     
     modInfo = infoUtil.getAMInfo()
 
