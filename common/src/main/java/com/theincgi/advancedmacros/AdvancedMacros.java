@@ -360,61 +360,43 @@ public class AdvancedMacros {
     }
 
     private static void loadScripts() {
-        try {
-            Optional<Resource> res = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(AdvancedMacros.MOD_ID, "scripts/searcher.lua"));
-            if (res.isEmpty()) {
-                return;
-            }
-            InputStream in = res.get().getInputStream();
-            globals.load(in, "searcher", "t", globals).call();
-            in.close();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        try {
-            Optional<Resource> res = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(AdvancedMacros.MOD_ID, "scripts/settings_fix.lua"));
-            if (res.isEmpty()) {
-                return;
-            }
-            InputStream in = res.get().getInputStream();
-            globals.load(in, "settingsFix", "t", globals).call();
-            in.close();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        try {
-            Optional<Resource> res = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(AdvancedMacros.MOD_ID, "scripts/morefunc.lua"));
-            if (res.isEmpty()) {
-                return;
-            }
-            InputStream in = res.get().getInputStream();
-            globals.load(in, "moreFunctions", "t", globals).call();
-            in.close();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        try {
-            Optional<Resource> res = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(AdvancedMacros.MOD_ID, "scripts/easings.lua"));
-            if (res.isEmpty()) {
-                return;
-            }
-            InputStream in = res.get().getInputStream();
-            globals.load(in, "easings", "t", globals).call();
-            in.close();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        try {
-            Optional<Resource> res = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(AdvancedMacros.MOD_ID, "scripts/repl.lua"));
-            if (res.isEmpty()) {
-                return;
-            }
-            InputStream in = res.get().getInputStream();
-            repl = globals.load(in, "REPL", "t", globals);
-            in.close();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+
+    	String[] scripts = new String[] {
+    			"searcher",
+    			"settings_fix",
+    			"morefunc",
+    			"easings",
+    			"httpquick",
+    			"class",
+    			"utils"
+		};
+		for( String script : scripts ) {
+			try {
+				Optional<Resource> res = getMinecraft().getResourceManager().getResource(new Identifier(AdvancedMacros.MOD_ID, "scripts/"+script+".lua"));
+				if(res.isEmpty()) {
+					System.err.println("Couldn't load packaged script '"+script+"'");
+					continue;
+				}
+				InputStream in = res.get().getInputStream();
+				globals.load(in, script, "t", globals).call();
+				in.close();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}			
+		}
+		
+		//REPL is different, result saved to variable
+		try {
+			Optional<Resource> res = getMinecraft().getResourceManager().getResource(new Identifier(AdvancedMacros.MOD_ID, "scripts/repl.lua"));
+			if(res.isEmpty()) {
+				System.err.println("Couldn't load packaged script 'REPL'");
+			}
+			InputStream in = res.get().getInputStream();
+			repl = globals.load(in, "REPL", "t", globals);
+			in.close();
+		} catch (Throwable e) {
+			e.printStackTrace();
+    	}
     }
 
     public static File[] getScriptList() {

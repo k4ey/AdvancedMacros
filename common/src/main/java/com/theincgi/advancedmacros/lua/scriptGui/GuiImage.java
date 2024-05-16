@@ -87,7 +87,7 @@ public class GuiImage extends ScriptGuiElement {
         RenderSystem.disableBlend();
 
         if (getHoverTint() != null && GuiRect.isInBounds(mouseX, mouseY, (int) x, (int) y, (int) wid, (int) hei)) {
-            GuiRectangle.drawRectangle(x, y, wid, hei, getHoverTint(), z);
+            GuiRectangle.drawRectangle(drawContext, x, y, wid, hei, getHoverTint(), z);
         }
         matrixStack.pop();
     }

@@ -10,6 +10,11 @@ import com.theincgi.advancedmacros.gui.elements.Moveable;
 import com.theincgi.advancedmacros.misc.HIDUtils;
 import com.theincgi.advancedmacros.misc.Utils;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.util.math.ColorHelper;
+
+import org.joml.Matrix4f;
 import org.luaj.vm2_v3_0_1.LuaError;
 import org.luaj.vm2_v3_0_1.LuaFunction;
 import org.luaj.vm2_v3_0_1.LuaTable;
@@ -39,17 +44,20 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
     float z;
     public float wid, hei;
     private boolean mouseWasOver = false;
+    private boolean mouseIsOver = false;
     boolean visible = true;
     private Group parent;
     Object hoverTintLock = new Object();
     private Object removeLock = new Object();
     private boolean isRemoved = false;
+	public final Gui gui;
 
     public ScriptGuiElement(Gui gui, Group parent) {
         this(gui, parent, true);
     }
 
     public ScriptGuiElement(Gui gui, Group parent, boolean addEventControls) {
+    	this.gui = gui;
         gui.addInputSubscriber(this);
         gui.addDrawable(this);
 
@@ -242,7 +250,7 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
         this.set("isHover", new ZeroArgFunction() {
             @Override
             public LuaValue call() {
-                return LuaValue.valueOf(mouseWasOver);
+                return LuaValue.valueOf(mouseIsOver);
             }
         });
 
@@ -359,13 +367,43 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
         boolean now = GuiButton.isInBounds(mouseX, mouseY, (int) x, (int) y, (int) wid, (int) hei);
         if (now != mouseWasOver) {
             if (now) {
+            	mouseIsOver = true;
                 onMouseEnter();
             } else {
+            	mouseIsOver = false;
                 onMouseExit();
             }
             mouseWasOver = now;
         }
 
+    }
+    
+    public static void fill(DrawContext ctx, float x1, float y1, float x2, float y2, float z, int color) {
+//    	fill(ctx, (int)x1,  (int)y1, (int) x2,  (int)y2, z, color);
+    	
+    	RenderLayer layer = RenderLayer.getGui();
+        float i;
+        Matrix4f matrix4f = ctx.getMatrices().peek().getPositionMatrix();
+        if (x1 < x2) {
+            i = x1;
+            x1 = x2;
+            x2 = i;
+        }
+        if (y1 < y2) {
+            i = y1;
+            y1 = y2;
+            y2 = i;
+        }
+        float f = (float)ColorHelper.Argb.getAlpha(color) / 255.0f;
+        float g = (float)ColorHelper.Argb.getRed(color) / 255.0f;
+        float h = (float)ColorHelper.Argb.getGreen(color) / 255.0f;
+        float j = (float)ColorHelper.Argb.getBlue(color) / 255.0f;
+        VertexConsumer vertexConsumer = ctx.getVertexConsumers().getBuffer(layer);
+        vertexConsumer.vertex(matrix4f, x1, y1, z).color(g, h, j, f).next();
+        vertexConsumer.vertex(matrix4f, x1, y2, z).color(g, h, j, f).next();
+        vertexConsumer.vertex(matrix4f, x2, y2, z).color(g, h, j, f).next();
+        vertexConsumer.vertex(matrix4f, x2, y1, z).color(g, h, j, f).next();
+        ctx.draw();
     }
 
     public static void resetMouseOver() {

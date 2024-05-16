@@ -156,6 +156,9 @@ public class LuaFunctions {
                 if (arg.istable()) {
                     Varargs args = arg0.subargs(2);
                     pair = new Pair<>(Text.literal(formatTableForLog(arg.checktable())), args);
+                } else if(arg instanceof LuaTable ){ //case for userdata so functions are still visible
+                	Varargs args = arg0.subargs(2);
+                    pair = new Pair<>(Text.literal(formatTableForLog((LuaTable)arg)), args);
                 } else {
                     toParse = arg.tojstring();
                     pair = Utils.toTextComponent(toParse, arg0.subargs(2), true);

@@ -37,10 +37,10 @@ public class GuiBox extends ScriptGuiElement {
             return;
         }
 
-        GuiRectangle.drawRectangle(x, y, wid, thickness, color, z);
-        GuiRectangle.drawRectangle(x, y, thickness, hei, color, z);
-        GuiRectangle.drawRectangle(x + wid - 1, y, thickness, hei + thickness - 1, color, z);
-        GuiRectangle.drawRectangle(x, y + hei - 1, wid + thickness - 1, thickness, color, z);
+        GuiRectangle.drawRectangle(drawContext, x, y, wid, thickness, color, z);
+        GuiRectangle.drawRectangle(drawContext, x, y, thickness, hei, color, z);
+        GuiRectangle.drawRectangle(drawContext, x + wid - 1, y, thickness, hei + thickness - 1, color, z);
+        GuiRectangle.drawRectangle(drawContext, x, y + hei - 1, wid + thickness - 1, thickness, color, z);
     }
 
     @Override

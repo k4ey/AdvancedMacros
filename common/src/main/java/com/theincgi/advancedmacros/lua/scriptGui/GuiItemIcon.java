@@ -81,7 +81,7 @@ public class GuiItemIcon extends ScriptGuiElement {
         RenderSystem.bindTexture(0);
 
         if (GuiRect.isInBounds(mouseX, mouseY, (int) x, (int) y, (int) wid, (int) hei)) {
-            GuiRectangle.drawRectangle(x, y, wid, hei, getHoverTint(), z + 150);
+            GuiRectangle.drawRectangle(drawContext, x, y, wid, hei, getHoverTint(), z + 150);
         }
     }
 

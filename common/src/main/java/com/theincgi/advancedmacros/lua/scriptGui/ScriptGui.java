@@ -223,6 +223,7 @@ public class ScriptGui extends LuaTable implements InputSubscriber {
                     gui.clearInputSubscribers();
                     gui.clearDrawables();
                     return NONE;
+                
                 default:
                     throw new LuaError("This function hasn't been implemented D:");
             }
