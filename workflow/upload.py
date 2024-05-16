@@ -68,7 +68,7 @@ def chooseVersionTags( mcVersion, platform ):
                 tagNames.append(tagName)
                 continue
 
-            if platform.lower() != "forge" and platform == name:
+            if platform.lower() != "forge" and name.lower().startswith( platform.lower() ):
                 tags.append( id )
                 tagNames.append(tagName)
                 continue
