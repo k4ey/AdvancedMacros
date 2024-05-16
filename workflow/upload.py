@@ -93,12 +93,15 @@ def upload_file(project_id, metadata, fileName, filePath):
     metadataJson = json.dumps(metadata)
     data = {
         'metadata': metadataJson,
+    }
+    files = {
         'file': (fileName, open(filePath, 'rb'))
     }
 
     response = requests.post(
         url, 
-        files=data,
+        data  = data,
+        files = files,
         headers = {
             "X-Api-Token": CF_TOKEN
         }
