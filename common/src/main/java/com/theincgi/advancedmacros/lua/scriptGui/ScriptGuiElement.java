@@ -58,8 +58,9 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
 
     public ScriptGuiElement(Gui gui, Group parent, boolean addEventControls) {
     	this.gui = gui;
-        gui.addInputSubscriber(this);
-        gui.addDrawable(this);
+//        gui.addInputSubscriber(this);
+//        gui.addDrawable(this);
+        this.parent = parent;
 
         //generic properties
         this.set("remove", new ZeroArgFunction() { //ready for garbag collectin
@@ -255,7 +256,6 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
         });
 
         parent.setParentControls(this);
-
     }
 
     public void enableColorControl() {

@@ -136,8 +136,8 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
     public void onDraw(DrawContext drawContext, Gui g, int mouseX, int mouseY, float partialTicks) {
         if (groupVisiblity) {
             for (int i = 0; i < children.size(); i++) {
-                if (children.get(i) instanceof ScriptGuiElement) {
-                    ScriptGuiElement child = (ScriptGuiElement) children.get(i);
+                if (children.get(i) instanceof Drawable) {
+                	Drawable child = (Drawable) children.get(i);
                     child.onDraw(drawContext, g, mouseX, mouseY, partialTicks);
                 }
             }

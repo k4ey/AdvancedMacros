@@ -38,6 +38,8 @@ public class ScriptGui extends LuaTable implements InputSubscriber {
     public ScriptGui() {
         gui = new TheGui();
         //gui.inputSubscribers.add(this); //tell yourself everything!
+        gui.addInputSubscriber(guiGroup);
+        gui.addDrawable(guiGroup);
 
         for (OpCodes op : OpCodes.values()) {
             set(op.name(), new CallableTable(op.getDocLocation(), new DoOperation(op)));

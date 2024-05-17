@@ -17,7 +17,12 @@ local changeLog = {
   "A clickable link can be found in the Mods menu in this mod's description",
   "&7"..DIVIDER, --keep
   "&b&BChange Log: &7version ".._MOD_VERSION, --do not remove
-  
+  "&a&BBug Fixes:",
+  " - Script GUIs group visibility now works correctly",
+
+  "&7"..DIVIDER,
+
+  "&b&BChange Log: &7version 11.0.0a",
   "&c&BAlpha build",
   "  &fThis is an &calpha build&f, there may be some features which may not work as expected",
   "  &7It's also the first version available for MC 1.20.4&f",
