@@ -223,10 +223,19 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
             addInputControls(this);
         }
 
-        this.set("setParent", new OneArgFunction() {
+        this.set("setParent", new TwoArgFunction() {
             @Override
-            public LuaValue call(LuaValue arg) {
+            public LuaValue call(LuaValue arg, LuaValue applyTransforms) {
                 if (arg instanceof Group) {
+                	if( applyTransforms.optboolean( true )) {
+	                	Group group = (Group) arg;
+	                	x += group.x;
+	                	y += group.y;
+	                	if( parent != null ) {
+	                		x -= parent.x;
+	                		y -= parent.y;
+	                	}
+                	}
                     changeParent((Group) arg);
                 } else {
                     throw new LuaError("arg is not GuiGroup");

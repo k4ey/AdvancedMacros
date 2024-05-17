@@ -5,6 +5,8 @@ import com.theincgi.advancedmacros.gui.Gui.InputSubscriber;
 import com.theincgi.advancedmacros.gui.elements.Drawable;
 import com.theincgi.advancedmacros.gui.elements.Moveable;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
+
 import org.luaj.vm2_v3_0_1.LuaError;
 import org.luaj.vm2_v3_0_1.LuaTable;
 import org.luaj.vm2_v3_0_1.LuaValue;
@@ -25,6 +27,7 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
     ArrayList<Object> children = new ArrayList<>();
     boolean groupVisiblity = true;
     int x = 0, y = 0;
+    float z;
     Group parent = null;
     //LuaFunction widthCalculate, heightCalculate;
 
@@ -63,6 +66,27 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
                 return LuaValue.NONE;
             }
         });
+        this.set("setX", new OneArgFunction() {
+            @Override
+            public LuaValue call(LuaValue arg1) {
+                setPos(arg1.checkint(), y);
+                return LuaValue.NONE;
+            }
+        });
+        this.set("setY", new OneArgFunction() {
+        	@Override
+        	public LuaValue call(LuaValue arg1) {
+        		setPos(x, arg1.checkint());
+        		return LuaValue.NONE;
+        	}
+        });
+        this.set("setZ", new OneArgFunction() {
+        	@Override
+        	public LuaValue call(LuaValue arg1) {
+        		z = (float) arg1.checkdouble();
+        		return LuaValue.NONE;
+        	}
+        });
         this.set("getPos", new VarArgFunction() {
             @Override
             public Varargs invoke(Varargs arg) {
@@ -83,6 +107,12 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
             public LuaValue call() {
                 return valueOf(y);
             }
+        });
+        this.set("getZ", new ZeroArgFunction() {
+        	@Override
+        	public LuaValue call() {
+        		return valueOf(z);
+        	}
         });
         this.set("setParent", new OneArgFunction() {
             @Override
@@ -135,12 +165,16 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
     @Override
     public void onDraw(DrawContext drawContext, Gui g, int mouseX, int mouseY, float partialTicks) {
         if (groupVisiblity) {
+        	MatrixStack matrixStack = drawContext.getMatrices();
+        	matrixStack.push();
+        	matrixStack.translate(0, 0, z);
             for (int i = 0; i < children.size(); i++) {
                 if (children.get(i) instanceof Drawable) {
                 	Drawable child = (Drawable) children.get(i);
                     child.onDraw(drawContext, g, mouseX, mouseY, partialTicks);
                 }
             }
+            matrixStack.pop();
         }
     }
 
