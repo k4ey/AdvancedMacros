@@ -185,7 +185,7 @@ function R.setup()
 						wid * 2 / 3 + 5,
 						15 + (#REPL.elements.varLines * 12) + REPL.elements.varGroup.getY()
 					)
-					REPL.elements.varLines[i].setParent(REPL.elements.varGroup)
+					REPL.elements.varLines[i].setParent(REPL.elements.varGroup, false)
 					REPL.elements.varLines[i].setOnMouseClick(function(x, y, button)
 						if button == 0 then --LMB
 							if type(REPL.elements.varLines[i].varValue) == "table" then
@@ -297,7 +297,7 @@ function R.setup()
 			end
 		end
 		text.setPos(0, 12 * #REPL.elements.outputLines + REPL.elements.outputGroup.getY())
-		text.setParent(REPL.elements.outputGroup)
+		text.setParent(REPL.elements.outputGroup, false)
 		table.insert(REPL.elements.outputLines, text)
 
 		REPL.elements.outputScroll.setMaxItems(#REPL.elements.outputLines)

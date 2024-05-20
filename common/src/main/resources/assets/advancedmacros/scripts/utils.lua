@@ -175,10 +175,11 @@ end
 function utils.inTable( x,tbl )
   utils.assertType("table", tbl, "utils.inTable",2)
   for a,b in pairs(tbl) do
-    if b==x then return true end
+    if b==x then return a end
   end
   return false
 end
+utils.findInTable = utils.inTable --alias
 
 --format time in seconds to something pretty
 function utils.fTime( t, format )

@@ -60,10 +60,10 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
     	this.gui = gui;
 //        gui.addInputSubscriber(this);
 //        gui.addDrawable(this);
-        this.parent = parent;
+        changeParent(parent);
 
         //generic properties
-        this.set("remove", new ZeroArgFunction() { //ready for garbag collectin
+        this.set("remove", new ZeroArgFunction() { //ready for garbage collectin
             @Override
             public LuaValue call() {
                 synchronized (removeLock) {
@@ -72,8 +72,11 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
                         return NONE;
                     }
                     isRemoved = true;
-                    gui.removeInputSubscriber(ScriptGuiElement.this);
-                    gui.removeDrawables(ScriptGuiElement.this);
+                    if(parent != null) {
+                    	parent.children.remove(this);
+                    }
+//                    gui.removeInputSubscriber(ScriptGuiElement.this);
+//                    gui.removeDrawables(ScriptGuiElement.this);
                     return NONE;
                 }
             }
@@ -86,8 +89,12 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
                         return NONE;
                     }
                     isRemoved = false;
-                    gui.addInputSubscriber(ScriptGuiElement.this);
-                    gui.addDrawable(ScriptGuiElement.this);
+                    if(parent != null) {
+                    	parent.children.add(this);
+                    }
+//                    gui.addInputSubscriber(ScriptGuiElement.this);
+//                    gui.addDrawable(ScriptGuiElement.this);
+                    
                     return NONE;
                 }
             }
@@ -129,7 +136,7 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
         this.set("getY", new ZeroArgFunction() {
             @Override
             public LuaValue call() {
-                return LuaValue.valueOf(y);
+                return LuaValue.valueOf(getY());
             }
         });
         this.set("setPos", new TwoArgFunction() {
@@ -143,8 +150,8 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
             @Override
             public Varargs invoke(Varargs arg) {
                 LuaTable t = new LuaTable();
-                t.set(1, LuaValue.valueOf(x));
-                t.set(2, LuaValue.valueOf(y));
+                t.set(1, LuaValue.valueOf(getX()));
+                t.set(2, LuaValue.valueOf(getY()));
                 return t.unpack();
             }
         });
@@ -227,16 +234,16 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
             @Override
             public LuaValue call(LuaValue arg, LuaValue applyTransforms) {
                 if (arg instanceof Group) {
+                	Group group = (Group) arg;
+                	if(group == parent)
+                		return NONE;
                 	if( applyTransforms.optboolean( true )) {
-	                	Group group = (Group) arg;
-	                	x += group.x;
-	                	y += group.y;
+	                	move( group.x, group.y );
 	                	if( parent != null ) {
-	                		x -= parent.x;
-	                		y -= parent.y;
+	                		move( -parent.x, -parent.y );
 	                	}
                 	}
-                    changeParent((Group) arg);
+                    changeParent(group);
                 } else {
                     throw new LuaError("arg is not GuiGroup");
                 }
@@ -246,14 +253,14 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
         this.set("setOnMouseEnter", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onMouseEnter = arg.checkfunction();
+                onMouseEnter = arg.isnil()? null : arg.checkfunction();;
                 return NONE;
             }
         });
         this.set("setOnMouseExit", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onMouseExit = arg.checkfunction();
+                onMouseExit = arg.isnil()? null : arg.checkfunction();;
                 return NONE;
             }
         });
@@ -316,56 +323,56 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
         s.set("setOnScroll", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onScroll = arg.checkfunction();
+                onScroll = arg.isnil()? null : arg.checkfunction();
                 return LuaValue.NONE;
             }
         });
         s.set("setOnMouseClick", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onMouseClick = arg.checkfunction();
+                onMouseClick = arg.isnil()? null : arg.checkfunction();
                 return LuaValue.NONE;
             }
         });
         s.set("setOnMouseRelease", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onMouseRelease = arg.checkfunction();
+                onMouseRelease = arg.isnil()? null : arg.checkfunction();
                 return LuaValue.NONE;
             }
         });
         s.set("setOnMouseDrag", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onMouseDrag = arg.checkfunction();
+                onMouseDrag = arg.isnil()? null : arg.checkfunction();
                 return LuaValue.NONE;
             }
         });
         s.set("setOnKeyPressed", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onKeyPressed = arg.checkfunction();
+                onKeyPressed = arg.isnil()? null : arg.checkfunction();
                 return LuaValue.NONE;
             }
         });
         s.set("setOnKeyReleased", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onKeyReleased = arg.checkfunction();
+                onKeyReleased = arg.isnil()? null : arg.checkfunction();
                 return LuaValue.NONE;
             }
         });
         s.set("setOnKeyRepeated", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onKeyRepeated = arg.checkfunction();
+                onKeyRepeated = arg.isnil()? null : arg.checkfunction();
                 return LuaValue.NONE;
             }
         });
         s.set("setOnCharTyped", new OneArgFunction() {
             @Override
             public LuaValue call(LuaValue arg) {
-                onCharTyped = arg.checkfunction();
+                onCharTyped = arg.isnil()? null : arg.checkfunction();
                 return LuaValue.NONE;
             }
         });
@@ -435,6 +442,11 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
     public void setPos(int x, int y) {
         setX(x);
         setY(y);
+    }
+    
+    public void move(int dx, int dy) {
+    	setX( dx + getX() );
+    	setY( dy + getY() );
     }
 
     @Override

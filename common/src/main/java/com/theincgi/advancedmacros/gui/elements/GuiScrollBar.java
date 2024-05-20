@@ -6,6 +6,8 @@ import com.theincgi.advancedmacros.gui.Gui.Focusable;
 import com.theincgi.advancedmacros.gui.Gui.InputSubscriber;
 import com.theincgi.advancedmacros.misc.PropertyPalette;
 import net.minecraft.client.gui.DrawContext;
+
+import org.joml.Math;
 import org.luaj.vm2_v3_0_1.LuaError;
 
 public class GuiScrollBar implements Drawable, InputSubscriber, Focusable, Moveable {
@@ -236,7 +238,7 @@ public class GuiScrollBar implements Drawable, InputSubscriber, Focusable, Movea
         if (items < visible) {
             return len - 2;
         }
-        return (int) ((len - 2) / (double) items * visible);
+        return Math.max(3, (int) ((len - 2) / (double) items * visible));
     }
 
     private int getButtonY() {
