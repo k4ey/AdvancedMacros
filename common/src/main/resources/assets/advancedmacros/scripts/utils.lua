@@ -69,6 +69,20 @@ function utils.reduce( tbl, f, i )
   return i
 end
 
+function utils.filter( tbl, condition, keepKeys )
+  local out = {}
+  for k, v in pairs( tbl ) do
+    if condition( k, v ) then
+      if keepKeys then
+        out[k] = v
+      else
+        table.insert(out, v)
+      end
+    end
+  end
+  return out
+end
+
 function utils.clone( x, deep )
   local tx = type(x)
   if tx=="table" then
