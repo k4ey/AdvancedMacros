@@ -96,7 +96,10 @@ public class ScriptGui extends LuaTable implements InputSubscriber {
                     r.thickness = (float) args.optdouble(5, 1);
                     return r;
                 case newGroup:
-                    return new Group(guiGroup);
+                    return new Group(guiGroup, 
+                    		args.optint(1, 0), //x 
+                    		args.optint(2, 0)  //y
+                    );
                 case newImage: {
                     GuiImage t = new GuiImage(gui, guiGroup);
                     t.setTexture(args.optvalue(1, LuaValue.NIL));

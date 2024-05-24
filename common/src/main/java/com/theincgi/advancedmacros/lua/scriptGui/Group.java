@@ -35,6 +35,13 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
         this();
         changeParent(parent);
     }
+    
+    public Group(Group parent, int x, int y) {
+    	this();
+    	changeParent(parent);
+    	this.x = x;
+    	this.y = y;
+    }
 
     public Group() {
         this.set("setVisible", new OneArgFunction() {
@@ -114,13 +121,22 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
         		return valueOf(z);
         	}
         });
-        this.set("setParent", new OneArgFunction() {
+        this.set("setParent", new TwoArgFunction() {
             @Override
-            public LuaValue call(LuaValue arg) {
-                if (arg instanceof Group) {
-                    changeParent((Group) arg);
+            public LuaValue call(LuaValue arg, LuaValue applyTransforms) {
+            	if (arg instanceof Group) {
+                	Group group = (Group) arg;
+                	if(group == parent)
+                		return NONE;
+                	if( applyTransforms.optboolean( true )) {
+	                	move( group.x, group.y );
+	                	if( parent != null ) {
+	                		move( -parent.x, -parent.y );
+	                	}
+                	}
+                    changeParent(group);
                 } else {
-                    throw new LuaError("Arg not a GuiGroup");
+                    throw new LuaError("arg is not GuiGroup");
                 }
                 return LuaValue.NONE;
             }
@@ -355,8 +371,9 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
 
     public void move(int dx, int dy) {
         for (int i = 0; i < children.size(); i++) {
-            if (children.get(i) instanceof Moveable) {
-                Moveable e = (Moveable) children.get(i);
+        	if (children.get(i) instanceof Group g) {
+        		g.move(dx, dy);
+        	} else if (children.get(i) instanceof Moveable e) {
                 e.setPos(e.getX() + dx, e.getY() + dy);
             }
         }
