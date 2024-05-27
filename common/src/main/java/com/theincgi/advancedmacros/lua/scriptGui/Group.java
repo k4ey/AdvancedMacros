@@ -4,6 +4,8 @@ import com.theincgi.advancedmacros.gui.Gui;
 import com.theincgi.advancedmacros.gui.Gui.InputSubscriber;
 import com.theincgi.advancedmacros.gui.elements.Drawable;
 import com.theincgi.advancedmacros.gui.elements.Moveable;
+import com.theincgi.advancedmacros.misc.Pair;
+
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -29,6 +31,7 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
     int x = 0, y = 0;
     float z;
     Group parent = null;
+    Pair<Integer, Integer> scissorOffset, scissorSize;
     //LuaFunction widthCalculate, heightCalculate;
 
     public Group(Group parent) {
@@ -161,6 +164,34 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
             }
         });
 
+        this.set("setScissor", new VarArgFunction() {
+        	@Override
+        	public Varargs invoke(Varargs args) {
+        		int x = Group.this.getX();
+        		int y = Group.this.getY();
+        		int width, height;
+        		if(args.narg() > 0 && (args.arg1() == FALSE || args.arg1() == NIL)) {
+        			scissorOffset = null;
+        			scissorSize = null;
+        		} else if(args.narg() == 2) {
+        			width = args.checkint(1);
+        			height = args.checkint(2);
+        			scissorSize = new Pair<Integer, Integer>(width, height);
+        			scissorOffset = null;
+        		} else if(args.narg() == 4) {
+        			x = args.checkint(1);
+        			y = args.checkint(2);
+        			width = args.checkint(3);
+        			height = args.checkint(4);
+        			scissorOffset = new Pair<Integer, Integer>(x, y);
+        			scissorSize = new Pair<Integer, Integer>(width, height);
+        		} else {
+        			throw new LuaError("Expected args nil/false or <x, y,> width, height");
+        		}
+        		return NONE;
+        	}
+		});
+        
         this.set("__class", "advancedMacros.GuiGroup");
         //		controls.set("setWidthCalculate", new OneArgFunction() {
         //			@Override
@@ -181,6 +212,23 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
     @Override
     public void onDraw(DrawContext drawContext, Gui g, int mouseX, int mouseY, float partialTicks) {
         if (groupVisiblity) {
+        	if(scissorSize != null) {
+        		if(scissorOffset != null) { 
+        			drawContext.enableScissor(
+        				getX() + scissorOffset.a,
+        				getY() + scissorOffset.b,
+        				getX() + scissorOffset.a + scissorSize.a,
+        				getY() + scissorOffset.b + scissorSize.b        				
+        			);
+        		} else {
+        			drawContext.enableScissor(
+            				getX(),
+            				getY(),
+            				getX() + scissorSize.a,
+            				getY() + scissorSize.b        				
+            			);
+        		}
+        	}
         	MatrixStack matrixStack = drawContext.getMatrices();
         	matrixStack.push();
         	matrixStack.translate(0, 0, z);
@@ -191,6 +239,9 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
                 }
             }
             matrixStack.pop();
+            if(scissorSize != null) {
+            	drawContext.disableScissor();
+            }
         }
     }
 
@@ -412,5 +463,5 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
         this.parent = arg;
         arg.children.add(this);
     }
-
+    
 }
