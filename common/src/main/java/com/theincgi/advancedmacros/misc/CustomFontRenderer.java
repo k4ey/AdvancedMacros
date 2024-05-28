@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.theincgi.advancedmacros.gui.Color;
 import com.theincgi.advancedmacros.lua.LuaValTexture;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
@@ -176,7 +177,7 @@ public class CustomFontRenderer {
         RenderSystem.setShaderColor(color.getR() / 255f, color.getG() / 255f, color.getB() / 255f, opaicty);
     }
 
-    public void renderText(double x, double y, float z, String text, float opacity, float textSize2d) {
+    public void renderText(DrawContext ctx, double x, double y, float z, String text, float opacity, float textSize2d) {
         boolean bold = false, italics = false;
         double tx = x;
         double ty = y;
@@ -306,31 +307,32 @@ public class CustomFontRenderer {
                         italics = true;
                         break;
                     case '&':
-                        drawChar2D((float) dx, (float) dy, z, c, textSize2d * ratio, textSize2d);
+                        drawChar2D(ctx, (float) dx, (float) dy, z, c, textSize2d * ratio, textSize2d);
                         dx -= rightVect.vectorX();
                         dy -= rightVect.vectorY();
                         break;
                 }
                 i++;
             } else {
-                drawChar2D((float) dx, (float) dy, z, c, textSize2d * ratio, textSize2d);
+                drawChar2D(ctx, (float) dx, (float) dy, z, c, textSize2d * ratio, textSize2d);
                 dx -= rightVect.vectorX();
                 dy -= rightVect.vectorY();
             }
         }
     }
 
-    private void drawChar2D(float x, float y, float z, char c, float wide, float tall) {
+    private void drawChar2D(DrawContext ctx, float x, float y, float z, char c, float wide, float tall) {
         loadUV(c, uvPair);
 
         RenderSystem.enableBlend();
-
+        Matrix4f matrix4f = ctx.getMatrices().peek().getPositionMatrix();
+        
         BufferBuilder buffer = Tessellator.getInstance().getBuffer();
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        buffer.vertex(x, y, z).texture(uvPair.umin, uvPair.vmin).next(); //bottom left
-        buffer.vertex(x, y + tall, z).texture(uvPair.umin, uvPair.vmax).next(); //top left
-        buffer.vertex(x + wide, y + tall, z).texture(uvPair.umax, uvPair.vmax).next(); //top right
-        buffer.vertex(x + wide, y, z).texture(uvPair.umax, uvPair.vmin).next(); //bottom right
+        buffer.vertex(matrix4f, x, y, z).texture(uvPair.umin, uvPair.vmin).next(); //bottom left
+        buffer.vertex(matrix4f, x, y + tall, z).texture(uvPair.umin, uvPair.vmax).next(); //top left
+        buffer.vertex(matrix4f, x + wide, y + tall, z).texture(uvPair.umax, uvPair.vmax).next(); //top right
+        buffer.vertex(matrix4f, x + wide, y, z).texture(uvPair.umax, uvPair.vmin).next(); //bottom right
         Tessellator.getInstance().draw();
     }
 

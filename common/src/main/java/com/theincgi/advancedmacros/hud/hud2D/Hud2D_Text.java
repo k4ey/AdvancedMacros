@@ -114,7 +114,7 @@ public class Hud2D_Text extends Hud2DItem {
         }
         if (monospaced) {
             RenderSystem.defaultBlendFunc();
-            AdvancedMacros.CUSTOM_FONT_RENDERER.renderText(dx, dy, z, text, getOpacity(), size);
+            AdvancedMacros.CUSTOM_FONT_RENDERER.renderText(drawContext, dx, dy, z, text, getOpacity(), size);
         } else {
             Scanner s = new Scanner(text);
             //RenderSystem.enableBlend();

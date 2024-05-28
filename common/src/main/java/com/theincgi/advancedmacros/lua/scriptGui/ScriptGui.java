@@ -1,5 +1,6 @@
 package com.theincgi.advancedmacros.lua.scriptGui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.theincgi.advancedmacros.event.TaskDispatcher;
 import com.theincgi.advancedmacros.gui.Gui;
 import com.theincgi.advancedmacros.gui.Gui.InputSubscriber;
@@ -459,17 +460,28 @@ public class ScriptGui extends LuaTable implements InputSubscriber {
             MatrixStack matrixStack = drawContext.getMatrices();
 
             if (parentGui != null) {
-                matrixStack.push();
-                matrixStack.translate(0, 0, -50);
+                
                 parentGui.gui.render(drawContext, mouseX, mouseY, partialTicks);
-                matrixStack.pop();
                 //setDrawDefaultBackground(false);
             } else {
                 //setDrawDefaultBackground(true);
             }
+            matrixStack.push();
+            matrixStack.translate(0, 0, nParents() * 50);
             super.render(drawContext, mouseX, mouseY, partialTicks);
+            matrixStack.pop();
         }
-
+        
+        
+        public int nParents() {
+        	if(parentGui == null)
+        		return 0;
+        	if(parentGui instanceof ScriptGui)
+        		if(((ScriptGui)parentGui).gui instanceof TheGui tg)
+        			return tg.nParents() + 1;
+        	return 1;
+        }
+        
         @Override
         public Text getTitle() {
             return Text.literal(guiName);

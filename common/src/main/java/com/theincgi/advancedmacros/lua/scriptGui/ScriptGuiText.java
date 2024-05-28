@@ -82,7 +82,7 @@ public class ScriptGuiText extends ScriptGuiElement {
         //FontRenderer fr = MinecraftClient.getInstance().fontRenderer;
         //FontRenderer fr;
         if (monospaced) {
-            AdvancedMacros.CUSTOM_FONT_RENDERER.renderText(x, y, z, text, color.getA(), textSize);
+            AdvancedMacros.CUSTOM_FONT_RENDERER.renderText(drawContext, x, y, z, text, color.getA(), textSize);
         } else {
             Scanner s = new Scanner(text);
             TextRenderer fr = MinecraftClient.getInstance().textRenderer; //AdvancedMacros.otherCustomFontRenderer;
@@ -103,6 +103,7 @@ public class ScriptGuiText extends ScriptGuiElement {
         if (getHoverTint() != null && GuiRect.isInBounds(mouseX, mouseY, (int) x, (int) y, (int) wid, (int) hei)) {
             Hud2D_Rectangle.drawRectangle(x, y, wid, hei, getHoverTint(), z);
         }
+        RenderSystem.setShaderColor(1, 1, 1, 1);        
     }
 
     @Override

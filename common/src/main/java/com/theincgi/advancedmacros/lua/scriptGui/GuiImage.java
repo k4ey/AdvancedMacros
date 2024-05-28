@@ -10,10 +10,15 @@ import com.theincgi.advancedmacros.misc.Utils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.ColorHelper;
+
+import org.joml.Matrix4f;
 import org.luaj.vm2_v3_0_1.LuaError;
 import org.luaj.vm2_v3_0_1.LuaValue;
 import org.luaj.vm2_v3_0_1.Varargs;
@@ -58,8 +63,8 @@ public class GuiImage extends ScriptGuiElement {
     }
 
     @Override
-    public void onDraw(DrawContext drawContext, Gui g, int mouseX, int mouseY, float partialTicks) {
-        super.onDraw(drawContext, g, mouseX, mouseY, partialTicks);
+    public void onDraw(DrawContext drawContext, Gui gui, int mouseX, int mouseY, float partialTicks) {
+        super.onDraw(drawContext, gui, mouseX, mouseY, partialTicks);
         if (!visible) {
             return;
         }
@@ -70,19 +75,20 @@ public class GuiImage extends ScriptGuiElement {
         float dx = x, dy = y, dw = wid, dh = hei;
 
         RenderSystem.setShaderColor(color.getR() / 255f, color.getG() / 255f, color.getB() / 255f, color.getA() / 255f);
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+//        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableBlend();
         if (lvt != null) {
             lvt.bindTexture();
-        }
-
+        } 
+        
+        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
         BufferBuilder buffer = Tessellator.getInstance().getBuffer();
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        buffer.vertex(dx, dy, z).texture(uMin, vMin).next();
-        buffer.vertex(dx, dy + dh, z).texture(uMin, vMax).next();
-        buffer.vertex(dx + dw, dy + dh, z).texture(uMax, vMax).next();
-        buffer.vertex(dx + dw, dy, z).texture(uMax, vMin).next();
+        buffer.vertex(matrix4f, dx,      dy,      z).texture(uMin, vMin).next();
+        buffer.vertex(matrix4f, dx,      dy + dh, z).texture(uMin, vMax).next();
+        buffer.vertex(matrix4f, dx + dw, dy + dh, z).texture(uMax, vMax).next();
+        buffer.vertex(matrix4f, dx + dw, dy,      z).texture(uMax, vMin).next();
         Tessellator.getInstance().draw();
         RenderSystem.disableBlend();
 
