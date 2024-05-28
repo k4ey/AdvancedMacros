@@ -207,6 +207,8 @@ public class FileSystem extends LuaTable {
                 try {
                     char sChar = ' ';
                     s += readDelims();
+                    if(fis.available() == 0)
+                    	return LuaValue.NIL;
                     while (fis.available() > 0) {
                         sChar = (char) fis.read();
                         if (isDelim(sChar)) {
