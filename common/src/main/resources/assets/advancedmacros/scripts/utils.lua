@@ -511,14 +511,23 @@ function utils.typeMatches( value, options )
 end
 
 --table serialization, optional sortFunc, visited for recursion ignore
-function utils.serializeOrdered( tbl, sortFunc, visited )
-  if type(tbl)~="table" then return type(tbl)=="string" and ('"'..tostring(tbl)..'"') or tostring(tbl) end
+function utils.serializeOrdered( tbl, sortFunc, indentSize, indentLevel, visited )
+  indentLevel = indentLevel or 1
+  local indent = indentSize and (indentSize > 0) and (" "):rep(indentSize):rep(indentLevel) or ""
+  local indentM1 = indentSize and (indentSize > 0) and (" "):rep(indentSize):rep(indentLevel - 1) or ""
+  local newLine = indentSize and "\n" or ""
+  local newLineIndent = indentSize and ("\n"..indent) or ""
+  local newLineIndentM1 = indentSize and ("\n"..indentM1) or ""
+
+  if type(tbl)~="table" then 
+    return (type(tbl)=="string" and ('"'..tostring(tbl)..'"') or tostring(tbl))
+  end
   visited = visited or {}
   if visited[tbl] then
     return tostring(tbl)
   end
   visited[tbl] = true
-  local out = { "{" }
+  local out = { "{".. newLine }
   local keys = utils.keys(tbl)
   table.sort( keys, sortFunc or function( a,b )
     if type(a)~=type(b) then
@@ -526,21 +535,32 @@ function utils.serializeOrdered( tbl, sortFunc, visited )
     end
     return a<b
   end ) --sortFunc is optional
+
   for i,v in ipairs( tbl ) do
-    if #out > 1 then table.insert( out, ', ' ) end
-    table.insert( out, utils.serializeOrdered(v) )
+    if indentSize then
+      table.insert( out, indent )
+    end
+    table.insert( out, utils.serializeOrdered(v, sortFunc, indentSize, indentLevel + 1, visited) )
+    table.insert( out, indentSize and ',\n' or ', ' )
   end
+  if out[#out]:trim() == "," then out[#out] = nil end
+
   for i,k in ipairs( keys ) do
     if type(k)~="number" then
       local v = tbl[k]
       local tv = type(v)
-      if #out > 1 then table.insert( out, ', ' ) end
+      if indentSize then
+        table.insert( out, indent )
+      end
       table.insert( out, k )
       table.insert( out, ' = ' )
-      table.insert( out,  utils.serializeOrdered(v, sortFunc))
+      table.insert( out,  utils.serializeOrdered(v, sortFunc, indentSize, indentLevel + 1, visited))
+      table.insert( out, indentSize and ',\n' or ', ' )
     end
   end
-  table.insert(out,"}")
+  if out[#out]:trim() == "," then out[#out] = nil end
+
+  table.insert(out, newLineIndentM1.."}")
   return table.concat(out)
 end
 
