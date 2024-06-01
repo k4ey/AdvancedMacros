@@ -171,6 +171,7 @@ public class AdvancedMacros {
         LuaTable editor = new LuaTable();
         ADVANCED_MACROS_TABLE.set("editor", editor);
         ADVANCED_MACROS_TABLE.set("openChangeLog", new OpenChangeLog());
+        ADVANCED_MACROS_TABLE.set("getResource", new GetResource());
         editor.set("jumpToLine", new EditorControls.JumpToLine());
 
         globals.set("run", new Call());
