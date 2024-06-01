@@ -904,8 +904,9 @@ public class Utils {
         return new LuaError(t);
     }
 
-    public static Varargs pinvoke(LuaFunction func, LuaValue... luaValues) {
+    public static Varargs pinvoke(LuaValue func, LuaValue... luaValues) {
         try {
+        	if(!func.isCallable()) throw new LuaError("attempt to call "+func.typename());
             return func.invoke(luaValues);
         } catch (Throwable e) {
             logError(toLuaError(e));
@@ -916,8 +917,9 @@ public class Utils {
     /**
      * nah, its invoke, but it has one return
      */
-    public static LuaValue pcall(LuaFunction func, LuaValue... luaValues) {
+    public static LuaValue pcall(LuaValue func, LuaValue... luaValues) {
         try {
+        	if(!func.isCallable()) throw new LuaError("attempt to call "+func.typename());
             return func.invoke(luaValues).arg1();
         } catch (Throwable e) {
             logError(toLuaError(e));
@@ -925,8 +927,9 @@ public class Utils {
         }
     }
 
-    public static Varargs pinvoke(LuaFunction func, Varargs luaValues) {
+    public static Varargs pinvoke(LuaValue func, Varargs luaValues) {
         try {
+        	if(!func.isCallable()) throw new LuaError("attempt to call "+func.typename());
             return func.invoke(luaValues);
         } catch (Throwable e) {
             logError(toLuaError(e));
@@ -937,9 +940,9 @@ public class Utils {
     /**
      * nah, its invoke, but it has one return
      */
-    public static LuaValue pcall(LuaFunction func, Varargs luaValues) {
+    public static LuaValue pcall(LuaValue func, Varargs luaValues) {
         try {
-
+        	if(!func.isCallable()) throw new LuaError("attempt to call "+func.typename());
             if (AdvancedMacros.globals.getCurrentLuaThread() == null) {
                 org.luaj.vm2_v3_0_1.LuaThread luaThread = new org.luaj.vm2_v3_0_1.LuaThread(AdvancedMacros.globals, func);
                 AdvancedMacros.globals.setCurrentLuaThread(luaThread);
@@ -951,9 +954,9 @@ public class Utils {
         }
     }
 
-    public static Varargs pcallVarArgs(LuaFunction func, Varargs luaValues) {
+    public static Varargs pcallVarArgs(LuaValue func, Varargs luaValues) {
         try {
-
+        	if(!func.isCallable()) throw new LuaError("attempt to call "+func.typename());
             if (AdvancedMacros.globals.getCurrentLuaThread() == null) {
                 org.luaj.vm2_v3_0_1.LuaThread luaThread = new org.luaj.vm2_v3_0_1.LuaThread(AdvancedMacros.globals, func);
                 AdvancedMacros.globals.setCurrentLuaThread(luaThread);

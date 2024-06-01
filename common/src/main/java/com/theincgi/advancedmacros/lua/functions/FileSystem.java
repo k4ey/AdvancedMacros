@@ -45,6 +45,8 @@ public class FileSystem extends LuaTable {
                 return valueOf(Utils.parseFileLocation(name, level).toString());
             }
         });
+        set("separator", File.separator);
+        set("pathSeparator", File.pathSeparator);
     }
 
     private static class Open extends TwoArgFunction {
