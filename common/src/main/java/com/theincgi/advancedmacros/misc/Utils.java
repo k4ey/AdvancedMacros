@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.theincgi.advancedmacros.AdvancedMacros;
 import com.theincgi.advancedmacros.event.EventHandler;
 import com.theincgi.advancedmacros.gui.Color;
+import com.theincgi.advancedmacros.lua.LuaDebug;
 import com.theincgi.advancedmacros.lua.LuaValTexture;
 import com.theincgi.advancedmacros.lua.util.BufferedImageControls;
 import com.theincgi.advancedmacros.lua.util.ContainerControls;
@@ -979,7 +980,7 @@ public class Utils {
     public static void debugPrint(LuaTable t) {
         System.out.println(LuaTableToString(t));
     }
-
+    
     public static File parseFileLocation(LuaValue arg0) {
         return parseFileLocation(arg0.isnil() ? "" : arg0.tojstring(), 1);
     }
@@ -997,13 +998,9 @@ public class Utils {
             arg = "";
         }
 
-        File file = null;
-        if (arg.startsWith("/") || arg.startsWith("\\")) {
-            file = new File(arg.substring(1));
-        } else if (arg.startsWith("~")) {
-            file = new File(AdvancedMacros.MACROS_ROOT_FOLDER, arg.substring(1));
-        } else {
-            LuaValue v = Utils.getDebugStacktrace(caller, level);
+        File file = new File( arg );
+        if( !file.isAbsolute()) {
+        	LuaValue v = Utils.getDebugStacktrace(caller, level);
             if (v.isnil()) {
                 throw new LuaError("Unable to get local path of file");
             }
@@ -1623,4 +1620,13 @@ public class Utils {
 		color  |=  tmp << 16;                   //X W Z Y
 		return color;
 	}*/
+    
+    
+    public static String currentWorkspace() {
+		return AdvancedMacros.getMinecraftThread().equals(Thread.currentThread()) ?
+    			LuaDebug.LuaThread.mcThreadWorkspace : LuaDebug.LuaThread.getCurrent().workspace;
+	}
+	public static void setMCThreadWorkspace( String workspace ) {
+		LuaDebug.LuaThread.mcThreadWorkspace = workspace;
+	}
 }

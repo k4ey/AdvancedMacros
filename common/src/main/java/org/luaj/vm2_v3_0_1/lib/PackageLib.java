@@ -28,6 +28,12 @@ import org.luaj.vm2_v3_0_1.LuaTable;
 import org.luaj.vm2_v3_0_1.LuaValue;
 import org.luaj.vm2_v3_0_1.Varargs;
 
+import com.theincgi.advancedmacros.AdvancedMacros;
+import com.theincgi.advancedmacros.lua.LuaDebug;
+import com.theincgi.advancedmacros.lua.LuaDebug.LuaThread;
+import com.theincgi.advancedmacros.misc.Settings;
+import com.theincgi.advancedmacros.misc.Utils;
+
 import java.io.InputStream;
 
 /**
@@ -218,8 +224,23 @@ public class PackageLib extends TwoArgFunction {
     public class require extends OneArgFunction {
 
         @Override
-        public LuaValue call(LuaValue arg) {
-            LuaString name = arg.checkstring();
+        public synchronized LuaValue call(LuaValue arg) {
+        	//changes for AM to support multiple workspaces
+        	String[] moduleParts = arg.checkjstring().split("::");
+            LuaString name, workspaceName, fullPath;
+            if(moduleParts.length == 1) {
+            	name = valueOf(moduleParts[0]);
+            	workspaceName = valueOf(
+            		Utils.currentWorkspace()
+            	);
+            } else {
+            	name = valueOf(moduleParts[1]);
+            	workspaceName = valueOf(moduleParts[0]);
+            }
+            
+//            workspacePath = valueOf( Settings.getWorkspacePath( workspaceName.checkjstring() ) );
+//            fullPath = valueOf(workspacePath.checkjstring() + "/" + name.checkjstring());
+            
             LuaValue loaded = package_.get(_LOADED);
             LuaValue result = loaded.get(name);
             if (result.toboolean()) {
@@ -240,7 +261,7 @@ public class PackageLib extends TwoArgFunction {
                 }
 
                 /* call loader with module name as argument */
-                loader = searcher.invoke(name);
+                loader = searcher.invoke(name, workspaceName);
                 if (loader.isfunction(1)) {
                     break;
                 }
@@ -248,13 +269,22 @@ public class PackageLib extends TwoArgFunction {
                     sb.append(loader.tojstring(1));
                 }
             }
-
+            
             // load the module using the loader
-            loaded.set(name, _SENTINEL);
+            fullPath = loader.checkstring(2);
+            result = loaded.get(fullPath);
+            if (result.toboolean()) {
+                if (result == _SENTINEL) {
+                    error("loop or previous error loading module '" + name + "'");
+                }
+                return result;
+            }
+            
+            loaded.set(fullPath, _SENTINEL);
             result = loader.arg1().call(name, loader.arg(2));
             if (!result.isnil()) {
-                loaded.set(name, result);
-            } else if ((result = loaded.get(name)) == _SENTINEL) {
+                loaded.set(fullPath, result);
+            } else if ((result = loaded.get(fullPath)) == _SENTINEL) {
                 loaded.set(name, result = LuaValue.TRUE);
             }
             return result;

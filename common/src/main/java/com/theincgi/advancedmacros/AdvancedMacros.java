@@ -76,6 +76,7 @@ public class AdvancedMacros {
     public static final String VERSION = "11.0.1a";
     public static final String GAME_VERSION = "1.20.4";
 
+    public static final String DEFAULT_WORKSPACE = "AM Default";
     public static final File MACROS_ROOT_FOLDER = getRootFolder();
     public static final File MACROS_FOLDER = new File(MACROS_ROOT_FOLDER, "macros");
     public static final File MACRO_SOUNDS_FOLDER = new File(MACROS_ROOT_FOLDER, "sounds");
@@ -100,6 +101,7 @@ public class AdvancedMacros {
     public static LuaValue repl;
 
     public static final EventHandler EVENT_HANDLER = new EventHandler();
+
 
     public AdvancedMacros() {
 
@@ -363,7 +365,8 @@ public class AdvancedMacros {
     private static void loadScripts() {
 
     	String[] scripts = new String[] {
-    			"searcher",
+//    			"searcher",
+    			"resource_searcher",
     			"settings_fix",
     			"morefunc",
     			"easings",

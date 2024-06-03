@@ -47,6 +47,12 @@ public class FileSystem extends LuaTable {
         });
         set("separator", File.separator);
         set("pathSeparator", File.pathSeparator);
+        set("isAbsolute", new OneArgFunction() {
+			@Override
+			public LuaValue call(LuaValue arg) {
+				return valueOf(new File(arg.checkjstring()).isAbsolute());
+			}
+		});
     }
 
     private static class Open extends TwoArgFunction {

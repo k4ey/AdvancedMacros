@@ -52,12 +52,16 @@ public class Settings {
         settings.set("save", new Save());
         settings.set("load", new Load());
         settings.set("minecraft", new MinecraftSettings());
-        if (settings.get("chat").isnil()) {
+        if(settings.get("chat").isnil()) {
             settings.set("chat", new LuaTable());
         }
-        if (settings.get("chat").get("maxLines").isnil()) {
+        if(settings.get("chat").get("maxLines").isnil()) {
             settings.set("maxLines", 100);
         }
+        if(settings.get("workspaces").isnil()) {
+			settings.set("workspaces", new LuaTable());
+			settings.get("workspaces").set(AdvancedMacros.DEFAULT_WORKSPACE, AdvancedMacros.MACROS_FOLDER.toString());
+		}
     }
     //	private static void loadDefaults(boolean force) {
     //
@@ -402,5 +406,11 @@ public class Settings {
         }
 
     }
+
+	public static String getWorkspacePath(String name) {
+		LuaTable workspaces = settings.get("workspaces").checktable();
+		
+		return workspaces.get( name ).checkjstring();
+	}
 
 }

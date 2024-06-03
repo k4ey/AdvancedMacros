@@ -10,6 +10,7 @@ import org.luaj.vm2_v3_0_1.LuaTable;
 import org.luaj.vm2_v3_0_1.LuaValue;
 import org.luaj.vm2_v3_0_1.Varargs;
 import org.luaj.vm2_v3_0_1.lib.DebugLib;
+import org.luaj.vm2_v3_0_1.lib.OneArgFunction;
 import org.luaj.vm2_v3_0_1.lib.ZeroArgFunction;
 
 import java.util.HashMap;
@@ -138,6 +139,8 @@ public class LuaDebug extends DebugLib {
         protected Status status = Status.NEW;
         private String label;
         protected Thread thread;
+        public String workspace = AdvancedMacros.DEFAULT_WORKSPACE;
+        public static String mcThreadWorkspace;
 
         private LuaThread() {
         }
@@ -154,6 +157,11 @@ public class LuaDebug extends DebugLib {
             }
             this.label = label;
             this.varagrs = varagrs;
+            
+            LuaThread parent = LuaThread.getCurrent();
+            if( parent != null ) {
+            	this.workspace = parent.workspace;
+            }
         }
 
         public static LuaThread getCurrent() {
@@ -215,7 +223,7 @@ public class LuaDebug extends DebugLib {
                     });
                     thread.setName(sFunc.tojstring());
                     thread.start();
-
+                    
                     try {
                         return ThreadControls.getControls(this);
                     } catch (Exception e) {
@@ -380,6 +388,8 @@ public class LuaDebug extends DebugLib {
             set("getID", new GetID());
             set("getLabel", new GetLabel());
             set("getUptime", new GetUptime());
+            set("getWorkspace", new GetWorkspace());
+            set("setWorkspace", new SetWorkspace());
             controlLookup.put(t, this);
         }
 
@@ -465,6 +475,24 @@ public class LuaDebug extends DebugLib {
                 return valueOf(t.label);
             }
 
+        }
+        
+        class GetWorkspace extends ZeroArgFunction {
+        	@Override
+        	public LuaValue call() {
+        		return valueOf(t.workspace);
+        	}
+        }
+        
+        class SetWorkspace extends OneArgFunction {
+        	@Override
+        	public LuaValue call(LuaValue arg) {
+        		String name = arg.checkjstring().trim();
+        		if(name.isBlank())
+        			throw new LuaError("Invalid workspace name \""+arg.checkjstring()+"\"");
+        		t.workspace = name;
+        		return NONE;
+        	}
         }
 
         public LuaThread getThread() {

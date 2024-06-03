@@ -2,6 +2,9 @@ package com.theincgi.advancedmacros.lua.functions;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.theincgi.advancedmacros.event.TaskDispatcher;
+import com.theincgi.advancedmacros.lua.LuaDebug;
+import com.theincgi.advancedmacros.misc.Utils;
+
 import org.luaj.vm2_v3_0_1.LuaError;
 import org.luaj.vm2_v3_0_1.LuaFunction;
 import org.luaj.vm2_v3_0_1.LuaValue;
@@ -25,7 +28,9 @@ public class RunOnMC extends VarArgFunction {
 
         }
         final LuaFunction theFunction = arg1.checkfunction();
+        String workspace = Utils.currentWorkspace();
         ListenableFuture<Varargs> f = TaskDispatcher.addTask(() -> {
+        	Utils.setMCThreadWorkspace(workspace);
             return theFunction.invoke(fArgs);
         });
         try {
