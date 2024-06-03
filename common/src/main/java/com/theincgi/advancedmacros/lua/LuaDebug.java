@@ -388,8 +388,6 @@ public class LuaDebug extends DebugLib {
             set("getID", new GetID());
             set("getLabel", new GetLabel());
             set("getUptime", new GetUptime());
-            set("getWorkspace", new GetWorkspace());
-            set("setWorkspace", new SetWorkspace());
             controlLookup.put(t, this);
         }
 
@@ -477,23 +475,7 @@ public class LuaDebug extends DebugLib {
 
         }
         
-        class GetWorkspace extends ZeroArgFunction {
-        	@Override
-        	public LuaValue call() {
-        		return valueOf(t.workspace);
-        	}
-        }
         
-        class SetWorkspace extends OneArgFunction {
-        	@Override
-        	public LuaValue call(LuaValue arg) {
-        		String name = arg.checkjstring().trim();
-        		if(name.isBlank())
-        			throw new LuaError("Invalid workspace name \""+arg.checkjstring()+"\"");
-        		t.workspace = name;
-        		return NONE;
-        	}
-        }
 
         public LuaThread getThread() {
             return t;

@@ -174,6 +174,8 @@ public class AdvancedMacros {
         ADVANCED_MACROS_TABLE.set("editor", editor);
         ADVANCED_MACROS_TABLE.set("openChangeLog", new OpenChangeLog());
         ADVANCED_MACROS_TABLE.set("getResource", new GetResource());
+        ADVANCED_MACROS_TABLE.set("getWorkspace", new Workspaces.GetWorkspace());
+        ADVANCED_MACROS_TABLE.set("setWorkspace", new Workspaces.SetWorkspace());
         editor.set("jumpToLine", new EditorControls.JumpToLine());
 
         globals.set("run", new Call());
