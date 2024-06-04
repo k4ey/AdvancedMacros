@@ -37,6 +37,7 @@ import com.theincgi.advancedmacros.misc.CustomFontRenderer;
 import com.theincgi.advancedmacros.misc.JarLibSearcher;
 import com.theincgi.advancedmacros.misc.Settings;
 import com.theincgi.advancedmacros.misc.Utils;
+import com.theincgi.advancedmacros.misc.Workspace;
 import com.theincgi.advancedmacros.publicInterfaces.LuaPlugin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -76,11 +77,12 @@ public class AdvancedMacros {
     public static final String VERSION = "11.0.1a";
     public static final String GAME_VERSION = "1.20.4";
 
-    public static final String DEFAULT_WORKSPACE = "AM Default";
+    public static final String DEFAULT_WORKSPACE_NAME = "AM Default";
     public static final File MACROS_ROOT_FOLDER = getRootFolder();
     public static final File MACROS_FOLDER = new File(MACROS_ROOT_FOLDER, "macros");
     public static final File MACRO_SOUNDS_FOLDER = new File(MACROS_ROOT_FOLDER, "sounds");
     public static final File CUSTOM_DOCS_FOLDER = new File(MACROS_ROOT_FOLDER, "docs");
+    public static final Workspace DEFAULT_WORKSPACE = new Workspace(DEFAULT_WORKSPACE_NAME, MACROS_FOLDER.getAbsolutePath());
     public static KeyBinding modKeybind;
     public static IBindingsGui macroMenuGui;
     public static EditorGUI editorGUI;

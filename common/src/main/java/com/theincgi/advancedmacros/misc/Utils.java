@@ -1622,10 +1622,15 @@ public class Utils {
 	}*/
     
     
-    public static String currentWorkspace() {
+    public static String currentWorkspaceName() {
 		return AdvancedMacros.getMinecraftThread().equals(Thread.currentThread()) ?
     			LuaDebug.LuaThread.mcThreadWorkspace : LuaDebug.LuaThread.getCurrent().workspace;
 	}
+    
+    public static String currentWorkspacePath() {
+    	return Settings.getWorkspacePath( currentWorkspaceName() ).get(); //should always be valid for current, checks on set
+    }
+    
 	public static void setMCThreadWorkspace( String workspace ) {
 		LuaDebug.LuaThread.mcThreadWorkspace = workspace;
 	}

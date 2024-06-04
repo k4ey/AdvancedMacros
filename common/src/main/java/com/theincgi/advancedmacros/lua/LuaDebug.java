@@ -3,6 +3,7 @@ package com.theincgi.advancedmacros.lua;
 import com.theincgi.advancedmacros.AdvancedMacros;
 import com.theincgi.advancedmacros.gui.Color;
 import com.theincgi.advancedmacros.lua.util.LuaMutex;
+import com.theincgi.advancedmacros.misc.Settings;
 import com.theincgi.advancedmacros.misc.Utils;
 import org.luaj.vm2_v3_0_1.LuaError;
 import org.luaj.vm2_v3_0_1.LuaFunction;
@@ -139,8 +140,8 @@ public class LuaDebug extends DebugLib {
         protected Status status = Status.NEW;
         private String label;
         protected Thread thread;
-        public String workspace = AdvancedMacros.DEFAULT_WORKSPACE;
-        public static String mcThreadWorkspace;
+        public String workspaceName = AdvancedMacros.DEFAULT_WORKSPACE_NAME;
+        public static String mcThreadWorkspaceName;
 
         private LuaThread() {
         }
@@ -160,7 +161,7 @@ public class LuaDebug extends DebugLib {
             
             LuaThread parent = LuaThread.getCurrent();
             if( parent != null ) {
-            	this.workspace = parent.workspace;
+            	this.workspaceName = parent.workspaceName;
             }
         }
 
