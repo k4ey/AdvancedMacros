@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.theincgi.advancedmacros.event.TaskDispatcher;
 import com.theincgi.advancedmacros.lua.LuaDebug;
 import com.theincgi.advancedmacros.misc.Utils;
+import com.theincgi.advancedmacros.misc.Workspace;
 
 import org.luaj.vm2_v3_0_1.LuaError;
 import org.luaj.vm2_v3_0_1.LuaFunction;
@@ -28,7 +29,7 @@ public class RunOnMC extends VarArgFunction {
 
         }
         final LuaFunction theFunction = arg1.checkfunction();
-        String workspace = Utils.currentWorkspace();
+        Workspace workspace = Utils.currentWorkspace();
         ListenableFuture<Varargs> f = TaskDispatcher.addTask(() -> {
         	Utils.setMCThreadWorkspace(workspace);
             return theFunction.invoke(fArgs);

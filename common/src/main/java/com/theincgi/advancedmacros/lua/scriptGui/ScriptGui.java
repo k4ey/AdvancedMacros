@@ -7,10 +7,13 @@ import com.theincgi.advancedmacros.gui.Gui;
 import com.theincgi.advancedmacros.gui.Gui.InputSubscriber;
 import com.theincgi.advancedmacros.gui.elements.GuiScrollBar.Orientation;
 import com.theincgi.advancedmacros.lua.LuaDebug;
+import com.theincgi.advancedmacros.lua.functions.Workspaces;
 import com.theincgi.advancedmacros.misc.CallableTable;
 import com.theincgi.advancedmacros.misc.HIDUtils;
 import com.theincgi.advancedmacros.misc.HIDUtils.Mouse;
 import com.theincgi.advancedmacros.misc.Utils;
+import com.theincgi.advancedmacros.misc.Workspace;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -37,7 +40,7 @@ public class ScriptGui extends LuaTable implements InputSubscriber {
     private boolean isOpen = false;
     private boolean pausesGame = true;
     private double lastMouseX, lastMouseY;
-    String workspace; //for MC thread events
+    Workspace workspace; //for MC thread events
 
     public ScriptGui() {
     	workspace = Utils.currentWorkspace();
@@ -233,6 +236,11 @@ public class ScriptGui extends LuaTable implements InputSubscriber {
                     gui.clearInputSubscribers();
                     gui.clearDrawables();
                     return NONE;
+                case setEventWorkspace:
+                	workspace = Workspaces.getWorkspaceByName( args.checkjstring(1) );
+                	return workspace.asTable();
+                case getEventWorkspace:
+                	return workspace.asTable();
                 
                 default:
                     throw new LuaError("This function hasn't been implemented D:");
@@ -264,7 +272,8 @@ public class ScriptGui extends LuaTable implements InputSubscriber {
         isDefaultBackground,
         isOpen,
         getMousePos,
-        grabMouse, ungrabMouse, isPausesGame, setPausesGame;
+        grabMouse, ungrabMouse, isPausesGame, setPausesGame,
+        setEventWorkspace, getEventWorkspace;
 
         public String[] getDocLocation() {
             String[] out = new String[3];

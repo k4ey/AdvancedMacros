@@ -87,7 +87,7 @@ public class Settings {
 		if(settings.get("workspaces").isnil()) {
 			settings.set("workspaces", new LuaTable());
 		}
-		settings.get("workspaces").set(AdvancedMacros.DEFAULT_WORKSPACE_NAME, AdvancedMacros.MACROS_FOLDER.toString());
+		settings.get("workspaces").set(AdvancedMacros.DEFAULT_WORKSPACE.name(), AdvancedMacros.DEFAULT_WORKSPACE.path());
 	}
 
     public static void unloadTexture(String file) {

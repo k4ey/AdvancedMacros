@@ -11,40 +11,41 @@ import com.theincgi.advancedmacros.AdvancedMacros;
 import com.theincgi.advancedmacros.lua.LuaDebug;
 import com.theincgi.advancedmacros.misc.Settings;
 import com.theincgi.advancedmacros.misc.Utils;
+import com.theincgi.advancedmacros.misc.Workspace;
 
 public class Workspaces {
-	public static class GetWorkspaceName extends ZeroArgFunction {
+	public static class GetWorkspace extends ZeroArgFunction {
     	@Override
     	public LuaValue call() {
-    		return valueOf(Utils.currentWorkspaceName());
+    		return Utils.currentWorkspace().asTable();
     	}
     }
-	
-	public static class GetWorkspacePath extends ZeroArgFunction {
-		@Override
-		public LuaValue call() {
-			return valueOf(Utils.currentWorkspacePath());
-		}
-	}
     
     public static class SetWorkspaceByName extends OneArgFunction {
     	@Override
     	public LuaValue call(LuaValue arg) {
-    		String name = arg.checkjstring().trim();
-    		if(name.isBlank())
-    			throw new LuaError("Invalid workspace name \""+arg.checkjstring()+"\"");
-    		
-    		Optional<String> path = Settings.getWorkspacePath( name );
-    		if( path.isEmpty() )
-    			throw new LuaError("Workspace '"+name+"' is not defined in getSettings().workspaces");
-    		
+    		Workspace workspace = getWorkspaceByName(arg.checkjstring());
     		if(Thread.currentThread() == AdvancedMacros.getMinecraftThread()) {
-    			
-    			Utils.setMCThreadWorkspace(path.get());
+    			Utils.setMCThreadWorkspace( workspace );
     		} else {
-    			LuaDebug.LuaThread.getCurrent().workspace = path.get();
+    			LuaDebug.LuaThread.getCurrent().workspace = workspace;
     		}
     		return NONE;
     	}
+    }
+    
+    /**
+     * @throws LuaError if workspace not defined
+     * */
+    public static Workspace getWorkspaceByName( String name ) {
+    	name = name.trim();
+		if(name.isBlank())
+			throw new LuaError("Invalid workspace name \""+name+"\"");
+		
+		Optional<String> path = Settings.getWorkspacePath( name );
+		if( path.isEmpty() )
+			throw new LuaError("Workspace '"+name+"' is not defined in getSettings().workspaces");
+		
+		return new Workspace(name, path.get());
     }
 }

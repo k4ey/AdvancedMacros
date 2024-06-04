@@ -82,7 +82,7 @@ public class AdvancedMacros {
     public static final File MACROS_FOLDER = new File(MACROS_ROOT_FOLDER, "macros");
     public static final File MACRO_SOUNDS_FOLDER = new File(MACROS_ROOT_FOLDER, "sounds");
     public static final File CUSTOM_DOCS_FOLDER = new File(MACROS_ROOT_FOLDER, "docs");
-    public static final Workspace DEFAULT_WORKSPACE = new Workspace(DEFAULT_WORKSPACE_NAME, MACROS_FOLDER.getAbsolutePath());
+    public static final Workspace DEFAULT_WORKSPACE = new Workspace(DEFAULT_WORKSPACE_NAME, MACROS_FOLDER.getAbsolutePath().replace(File.separator, "/"));
     public static KeyBinding modKeybind;
     public static IBindingsGui macroMenuGui;
     public static EditorGUI editorGUI;
@@ -177,7 +177,7 @@ public class AdvancedMacros {
         ADVANCED_MACROS_TABLE.set("openChangeLog", new OpenChangeLog());
         ADVANCED_MACROS_TABLE.set("getResource", new GetResource());
         ADVANCED_MACROS_TABLE.set("getWorkspace", new Workspaces.GetWorkspace());
-        ADVANCED_MACROS_TABLE.set("setWorkspace", new Workspaces.SetWorkspace());
+        ADVANCED_MACROS_TABLE.set("setWorkspace", new Workspaces.SetWorkspaceByName());
         editor.set("jumpToLine", new EditorControls.JumpToLine());
 
         globals.set("run", new Call());

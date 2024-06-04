@@ -7,8 +7,11 @@ import com.theincgi.advancedmacros.gui.Gui.InputSubscriber;
 import com.theincgi.advancedmacros.gui.elements.Drawable;
 import com.theincgi.advancedmacros.gui.elements.GuiButton;
 import com.theincgi.advancedmacros.gui.elements.Moveable;
+import com.theincgi.advancedmacros.lua.functions.Workspaces;
 import com.theincgi.advancedmacros.misc.HIDUtils;
 import com.theincgi.advancedmacros.misc.Utils;
+import com.theincgi.advancedmacros.misc.Workspace;
+
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -51,7 +54,7 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
     private Object removeLock = new Object();
     private boolean isRemoved = false;
 	public final Gui gui;
-	String workspace;
+	Workspace workspace;
 
     public ScriptGuiElement(Gui gui, Group parent) {
         this(gui, parent, true);
@@ -272,6 +275,19 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
                 return LuaValue.valueOf(mouseIsOver);
             }
         });
+        this.set("setEventWorkspace", new OneArgFunction() {
+			@Override
+			public LuaValue call(LuaValue arg) {
+				workspace = Workspaces.getWorkspaceByName(arg.checkjstring(1));
+				return workspace.asTable();
+			}
+		});
+        this.set("getEventWorkspace", new ZeroArgFunction() {
+			@Override
+			public LuaValue call() {
+				return workspace.asTable();
+			}
+		});
 
         parent.setParentControls(this);
     }

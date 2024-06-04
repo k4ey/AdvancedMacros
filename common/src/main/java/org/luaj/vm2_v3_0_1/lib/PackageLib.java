@@ -231,7 +231,7 @@ public class PackageLib extends TwoArgFunction {
             if(moduleParts.length == 1) {
             	name = valueOf(moduleParts[0]);
             	workspaceName = valueOf(
-            		Utils.currentWorkspace()
+            		Utils.currentWorkspace().name()
             	);
             } else {
             	name = valueOf(moduleParts[1]);
