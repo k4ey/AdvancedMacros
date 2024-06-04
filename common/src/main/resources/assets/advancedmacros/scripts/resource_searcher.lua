@@ -117,3 +117,16 @@ function package.unloadWorkspace( workspace )
   end
 end
 
+advancedMacros.resources = {}
+function requireResource( name )
+  if not advancedMacros.resources[ name ] then
+    local src = getResource( name )
+    advancedMacros.resources[name] = load( src )()
+  end
+  
+  return advancedMacros.resources[ name ]
+end
+
+function unloadResource( name )
+  advancedMacros.resrouces[ name ] = nil
+end
