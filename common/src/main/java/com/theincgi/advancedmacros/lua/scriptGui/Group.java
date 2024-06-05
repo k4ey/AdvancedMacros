@@ -32,6 +32,7 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
     float z;
     Group parent = null;
     Pair<Integer, Integer> scissorOffset, scissorSize;
+    boolean isRemoved;
     //LuaFunction widthCalculate, heightCalculate;
 
     public Group(Group parent) {
@@ -191,6 +192,38 @@ public class Group extends LuaTable implements Moveable, InputSubscriber, Drawab
         		return NONE;
         	}
 		});
+        
+        this.set("remove", new ZeroArgFunction() {
+			@Override
+			public LuaValue call() {
+				synchronized (this) {					
+					if (isRemoved) {
+	                    return NONE;
+	                }
+	                isRemoved = true;
+	                if(parent != null) {
+	                	parent.children.remove(Group.this);
+	                }
+	                return NONE;
+				}
+			}
+		});
+        this.set("unremove", new ZeroArgFunction() { //back from the dead
+            @Override
+            public LuaValue call() {
+                synchronized (this) {
+                    if (!isRemoved) {
+                        return NONE;
+                    }
+                    isRemoved = false;
+                    if(parent != null) {
+                    	parent.children.add(Group.this);
+                    }
+                    
+                    return NONE;
+                }
+            }
+        });
         
         this.set("__class", "advancedMacros.GuiGroup");
         //		controls.set("setWidthCalculate", new OneArgFunction() {

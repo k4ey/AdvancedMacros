@@ -80,8 +80,6 @@ public abstract class ScriptGuiElement extends LuaTable implements Drawable, Inp
                     if(parent != null) {
                     	parent.children.remove(ScriptGuiElement.this);
                     }
-//                    gui.removeInputSubscriber(ScriptGuiElement.this);
-//                    gui.removeDrawables(ScriptGuiElement.this);
                     return NONE;
                 }
             }
